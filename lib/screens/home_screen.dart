@@ -147,6 +147,14 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Recipe Creator AI'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          if (widget.userProvider == null && user != null)
+            IconButton(
+              tooltip: 'Sign out',
+              onPressed: () => FirebaseAuth.instance.signOut(),
+              icon: const Icon(Icons.logout),
+            ),
+        ],
       ),
       body: SafeArea(
         child: ListView(

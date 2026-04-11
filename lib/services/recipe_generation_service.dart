@@ -5,8 +5,8 @@ import 'package:recipe_creator_ai/utils/recipe_response_parser.dart';
 
 class RecipeGenerationService {
   RecipeGenerationService({FirebaseAI? firebaseAI, FirebaseAuth? auth})
-      : _firebaseAIOverride = firebaseAI,
-        _authOverride = auth;
+    : _firebaseAIOverride = firebaseAI,
+      _authOverride = auth;
 
   final FirebaseAI? _firebaseAIOverride;
   final FirebaseAuth? _authOverride;
@@ -15,7 +15,7 @@ class RecipeGenerationService {
       _firebaseAIOverride ??
       FirebaseAI.googleAI(auth: _authOverride ?? FirebaseAuth.instance);
 
-  static const _modelName = 'gemini-2.0-flash';
+  static const _modelName = 'gemini-2.5-flash-lite';
 
   static const _systemInstruction = '''
 You are a helpful cooking assistant. The user lists ingredients they already have.
