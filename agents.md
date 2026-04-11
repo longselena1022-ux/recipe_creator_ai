@@ -15,7 +15,7 @@ Flutter app: user signs in, enters ingredients they have, gets **3–5 recipe su
 ## Entry and navigation
 
 - `lib/main.dart`: `WidgetsFlutterBinding.ensureInitialized()`, `Firebase.initializeApp(name: 'Recipe Creator AI', options: DefaultFirebaseOptions.currentPlatform)`, `MaterialApp` → `home: AuthGate()`.
-- `lib/widgets/auth_gate.dart`: `StreamBuilder` on `FirebaseAuth.instance.authStateChanges()`. No user → `AuthScreen`; signed in → `HomeScreen` with **new** `RecipeGenerationService()` and `RecipeHistoryRepository(FirebaseFirestore.instance)` each build (no global DI).
+- `lib/widgets/auth_gate.dart`: `StreamBuilder` on `FirebaseAuth.instance.authStateChanges()`. No user → `AuthScreen`; signed in → `HomeScreen` with **new** `RecipeGenerationService()`, `RecipeHistoryRepository(FirebaseFirestore.instance)`, and `SavedRecipesRepository(FirebaseFirestore.instance)` each build (no global DI).
 
 ## Authentication
 
@@ -23,10 +23,11 @@ Flutter app: user signs in, enters ingredients they have, gets **3–5 recipe su
 
 ## Core user flow (home)
 
-- `lib/screens/home_screen.dart`: multiline ingredients field → **Generate recipes** → `RecipeGenerationService.generate(text)`.
+- `lib/screens/home_screen.dart`: multiline ingredients field → **Generate recipes** → `RecipeGenerationService.generate(text)`. Optional `savedRecipesRepository` for saved/liked recipes (also injected from `AuthGate` when signed in).
 - On success, if `user` + `historyRepository` exist and list non-empty → `saveGeneration` (errors shown via `SnackBar`, generation still shown).
-- **Recent**: `StreamBuilder` on `repo.watchRecent(user.uid)` (cards → bottom sheet → tap recipe → detail sheet).
-- **Suggestions**: current run’s `List<Recipe>` as cards → detail bottom sheet.
+- **Recent**: `StreamBuilder` on `repo.watchRecent(user.uid)` (cards → bottom sheet → tap recipe → detail sheet; per-recipe save action).
+- **Saved**: when `savedRecipesRepository` is set, `StreamBuilder` on `watchSaved(user.uid)` — users can **save** individual recipes (bookmark on suggestion/history rows or **Save recipe** in the detail sheet), **like** (`liked` on Firestore docs), and **delete** (remove doc, with confirm on list and in detail).
+- **Suggestions**: current run’s `List<Recipe>` as cards → detail bottom sheet (bookmark to save without opening).
 - **Test hook**: optional `userProvider` overrides `FirebaseAuth.instance.currentUser`. Sign-out in the AppBar appears only when `userProvider` is **unset** and `currentUser` is non-null (normal signed-in app use).
 
 ## Recipe generation
@@ -42,13 +43,16 @@ Flutter app: user signs in, enters ingredients they have, gets **3–5 recipe su
 ## Data model
 
 - `lib/models/recipe.dart`: `title`, `ingredients` (`List<String>`), `steps` (`List<String>`), `fromJson` / `toJson`.
+- `lib/models/saved_recipe_entry.dart`: Firestore row for a user-saved recipe (`id`, `recipe`, `liked`, `savedAt`, optional `fromIngredients`).
 - `lib/services/recipe_history_repository.dart`: `GenerationRecord` (id, ingredientsText, recipes, createdAt from `Timestamp`).
+- `lib/services/saved_recipes_repository.dart`: `saveRecipe` (returns new doc id), `deleteSavedRecipe`, `setLiked`, `watchSaved` (`orderBy('savedAt', descending: true)`).
 
 ## Firestore shape
 
 - Path: `users/{userId}/generations` (subcollection).
 - Document fields on save: `userId`, `ingredients` (string), `recipes` (list of maps from `Recipe.toJson()`), `createdAt` (`FieldValue.serverTimestamp()`).
 - `watchRecent`: `orderBy('createdAt', descending: true)`, `limit(8)`. **Requires a Firestore index** if not auto-created for this composite query.
+- Path: `users/{userId}/savedRecipes` (subcollection). Document fields: `userId`, `recipe` (map from `Recipe.toJson()`), `liked` (bool), `savedAt` (`FieldValue.serverTimestamp()`), optional `fromIngredients` (string). `watchSaved` orders by `savedAt` descending.
 
 ## Firebase configuration
 

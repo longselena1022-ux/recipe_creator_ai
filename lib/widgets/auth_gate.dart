@@ -5,6 +5,7 @@ import 'package:recipe_creator_ai/screens/auth_screen.dart';
 import 'package:recipe_creator_ai/screens/home_screen.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
+import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -26,6 +27,8 @@ class AuthGate extends StatelessWidget {
         return HomeScreen(
           generationService: RecipeGenerationService(),
           historyRepository: RecipeHistoryRepository(FirebaseFirestore.instance),
+          savedRecipesRepository:
+              SavedRecipesRepository(FirebaseFirestore.instance),
         );
       },
     );
