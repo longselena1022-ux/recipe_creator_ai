@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "recipe-creator-ai-placeholder",
-    "storage_bucket": "recipe-creator-ai-placeholder.appspot.com"
+    "project_number": "289612910458",
+    "project_id": "recipe-generator-d96af",
+    "storage_bucket": "recipe-generator-d96af.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:289612910458:android:3caaa0854353d45cbe50c3",
         "android_client_info": {
           "package_name": "com.example.recipe_creator_ai"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "REPLACE_ME"
+          "current_key": "AIzaSyBPhHMRHVzblCdmT-9dS6IURHsjxjSL1eo"
         }
       ],
       "services": {

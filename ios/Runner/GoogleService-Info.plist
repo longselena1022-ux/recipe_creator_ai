@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>REPLACE_ME</string>
+	<string>AIzaSyBblpXIFox0CiVwUhvUMal6L14m9Q5oMeY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>000000000000</string>
+	<string>289612910458</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.recipeCreatorAi</string>
 	<key>PROJECT_ID</key>
-	<string>recipe-creator-ai-placeholder</string>
+	<string>recipe-generator-d96af</string>
 	<key>STORAGE_BUCKET</key>
-	<string>recipe-creator-ai-placeholder.appspot.com</string>
+	<string>recipe-generator-d96af.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:000000000000:ios:0000000000000000000000</string>
+	<string>1:289612910458:ios:0da0048c0f9f1090be50c3</string>
 </dict>
 </plist>

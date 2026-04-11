@@ -1,12 +1,19 @@
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recipe_creator_ai/models/recipe.dart';
 import 'package:recipe_creator_ai/utils/recipe_response_parser.dart';
 
 class RecipeGenerationService {
-  RecipeGenerationService({String? apiKey})
-      : _apiKey = apiKey ?? const String.fromEnvironment('GEMINI_API_KEY');
+  RecipeGenerationService({FirebaseAI? firebaseAI, FirebaseAuth? auth})
+      : _firebaseAIOverride = firebaseAI,
+        _authOverride = auth;
 
-  final String _apiKey;
+  final FirebaseAI? _firebaseAIOverride;
+  final FirebaseAuth? _authOverride;
+
+  FirebaseAI get _firebaseAI =>
+      _firebaseAIOverride ??
+      FirebaseAI.googleAI(auth: _authOverride ?? FirebaseAuth.instance);
 
   static const _modelName = 'gemini-2.0-flash';
 
@@ -23,15 +30,8 @@ Each array element must be an object with exactly these keys:
 ''';
 
   Future<List<Recipe>> generate(String ingredientsText) async {
-    if (_apiKey.isEmpty) {
-      throw StateError(
-        'Missing GEMINI_API_KEY. Run with: flutter run --dart-define=GEMINI_API_KEY=your_key',
-      );
-    }
-
-    final model = GenerativeModel(
+    final model = _firebaseAI.generativeModel(
       model: _modelName,
-      apiKey: _apiKey,
       systemInstruction: Content.system(_systemInstruction),
     );
 

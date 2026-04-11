@@ -5,7 +5,7 @@ import 'package:recipe_creator_ai/screens/home_screen.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 
 class _FakeRecipeGenerationService extends RecipeGenerationService {
-  _FakeRecipeGenerationService() : super(apiKey: 'fake');
+  _FakeRecipeGenerationService() : super();
 
   @override
   Future<List<Recipe>> generate(String ingredientsText) async {
