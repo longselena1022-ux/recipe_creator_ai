@@ -31,7 +31,8 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Generate recipes'));
+    await tester.ensureVisible(find.text('Find Recipes'));
+    await tester.tap(find.text('Find Recipes'));
     await tester.pumpAndSettle();
 
     expect(find.text('Test toast'), findsOneWidget);

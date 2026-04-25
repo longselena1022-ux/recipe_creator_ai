@@ -1,8 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_creator_ai/services/user_profile_repository.dart';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+  const AuthScreen({
+    super.key,
+    required this.userProfileRepository,
+  });
+
+  final UserProfileRepository userProfileRepository;
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -11,6 +17,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -21,9 +28,17 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   void dispose() {
     _emailController.dispose();
+    _nameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  String? _nameError(String? value) {
+    if (!_createAccount) return null;
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return 'Enter your name';
+    return null;
   }
 
   String? _emailError(String? value) {
@@ -50,17 +65,34 @@ class _AuthScreenState extends State<AuthScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     final email = _emailController.text.trim();
+    final name = _nameController.text.trim();
     final password = _passwordController.text;
     try {
+      UserCredential credential;
       if (_createAccount) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
+        if (name.isNotEmpty) {
+          await credential.user?.updateDisplayName(name);
+        }
       } else {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
+        );
+      }
+      final user = credential.user;
+      if (user != null) {
+        await widget.userProfileRepository.ensureProfile(
+          userId: user.uid,
+          email: email,
+          name: _createAccount
+              ? name
+              : (user.displayName?.trim().isNotEmpty == true
+                    ? user.displayName
+                    : null),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -147,6 +179,19 @@ class _AuthScreenState extends State<AuthScreen> {
                       },
                     ),
                     const SizedBox(height: 24),
+                    if (_createAccount) ...[
+                      TextFormField(
+                        controller: _nameController,
+                        autofillHints: const [AutofillHints.name],
+                        decoration: const InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: _nameError,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
