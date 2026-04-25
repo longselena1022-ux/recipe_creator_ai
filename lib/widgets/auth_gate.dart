@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_creator_ai/screens/auth_screen.dart';
 import 'package:recipe_creator_ai/screens/home_screen.dart';
+import 'package:recipe_creator_ai/screens/login_screen.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
 import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
@@ -23,7 +23,7 @@ class AuthGate extends StatelessWidget {
         }
         final user = snapshot.data;
         if (user == null) {
-          return AuthScreen(
+          return LoginScreen(
             userProfileRepository: UserProfileRepository(FirebaseFirestore.instance),
           );
         }
