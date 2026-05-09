@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:recipe_creator_ai/main.dart';
 import 'package:recipe_creator_ai/models/user_profile.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
 import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
+import 'package:recipe_creator_ai/services/theme_controller.dart';
 import 'package:recipe_creator_ai/services/user_profile_repository.dart';
 import 'package:recipe_creator_ai/widgets/home/profile_avatar.dart';
 
@@ -135,6 +137,12 @@ class ProfileScreen extends StatelessWidget {
             _sectionLabel('PREFERENCES', cs),
             const SizedBox(height: 10),
             _settingsCard(context, cs, [
+              _SettingsRow(
+                icon: Icons.brightness_6_outlined,
+                label: 'Appearance',
+                value: _themeModeLabel(AppThemeScope.of(context).mode),
+                onTap: () => _pickTheme(context),
+              ),
               _SettingsRow(
                 icon: Icons.notifications_none_rounded,
                 label: 'Notifications',
@@ -599,6 +607,125 @@ class ProfileScreen extends StatelessWidget {
       applicationName: 'Recipe Creator AI',
       applicationVersion: '1.0.0',
       applicationLegalese: 'Crafted with calm capability.',
+    );
+  }
+
+  static String _themeModeLabel(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+      case ThemeMode.system:
+        return 'System default';
+    }
+  }
+
+  Future<void> _pickTheme(BuildContext context) async {
+    final controller = AppThemeScope.of(context);
+    final cs = Theme.of(context).colorScheme;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: cs.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Appearance',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+                _themeOption(
+                  ctx,
+                  controller,
+                  mode: ThemeMode.light,
+                  icon: Icons.light_mode_outlined,
+                  label: 'Light',
+                  description: 'Bright surfaces and warm whites.',
+                ),
+                _themeOption(
+                  ctx,
+                  controller,
+                  mode: ThemeMode.dark,
+                  icon: Icons.dark_mode_outlined,
+                  label: 'Dark',
+                  description: 'Low-light tones, easy on the eyes.',
+                ),
+                _themeOption(
+                  ctx,
+                  controller,
+                  mode: ThemeMode.system,
+                  icon: Icons.brightness_auto_outlined,
+                  label: 'System default',
+                  description: 'Match your device setting.',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _themeOption(
+    BuildContext context,
+    ThemeController controller, {
+    required ThemeMode mode,
+    required IconData icon,
+    required String label,
+    required String description,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+    final selected = controller.mode == mode;
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: cs.primaryContainer.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: cs.primary, size: 20),
+      ),
+      title: Text(
+        label,
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+          color: cs.onSurface,
+        ),
+      ),
+      subtitle: Text(
+        description,
+        style: GoogleFonts.workSans(
+          fontSize: 12.5,
+          color: cs.onSurfaceVariant,
+        ),
+      ),
+      trailing: selected
+          ? Icon(Icons.check_circle_rounded, color: cs.primary)
+          : null,
+      onTap: () async {
+        await controller.setMode(mode);
+        if (context.mounted) Navigator.of(context).pop();
+      },
     );
   }
 
