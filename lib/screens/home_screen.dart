@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/models/recipe.dart';
 import 'package:recipe_creator_ai/models/saved_recipe_entry.dart';
-import 'package:recipe_creator_ai/models/user_profile.dart';
+import 'package:recipe_creator_ai/screens/profile_screen.dart';
 import 'package:recipe_creator_ai/screens/recipe_detail_screen.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
@@ -1381,112 +1381,13 @@ class _HomeScreenState extends State<HomeScreen> {
   // ─── Profile Tab ────────────────────────────────────────────────────────────
 
   Widget _buildProfileTab(BuildContext context, User? user, ColorScheme cs) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        24,
-        20,
-        MediaQuery.paddingOf(context).bottom + 80,
-      ),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: user == null
-              ? Text(
-                  'Profile is available when signed in.',
-                  style: GoogleFonts.workSans(color: cs.onSurfaceVariant),
-                )
-              : widget.userProfileRepository == null
-                  ? Text(
-                      'Profile sync is unavailable.',
-                      style: GoogleFonts.workSans(color: cs.onSurfaceVariant),
-                    )
-                  : StreamBuilder<UserProfile?>(
-                      stream: widget.userProfileRepository!.watchProfile(
-                        user.uid,
-                      ),
-                      builder: (context, snapshot) {
-                        final profile = snapshot.data;
-                        final labelName =
-                            (profile?.name.trim().isNotEmpty == true)
-                                ? profile!.name.trim()
-                                : (user.displayName?.trim().isNotEmpty == true
-                                      ? user.displayName!.trim()
-                                      : 'Chef');
-                        final labelEmail =
-                            (profile?.email.trim().isNotEmpty == true)
-                                ? profile!.email.trim()
-                                : (user.email ?? '');
-                        return Container(
-                          padding: const EdgeInsets.all(28),
-                          decoration: BoxDecoration(
-                            color: cs.surfaceContainerLowest,
-                            borderRadius: BorderRadius.circular(28),
-                            boxShadow: [
-                              BoxShadow(
-                                color: cs.onSurface.withValues(alpha: 0.06),
-                                blurRadius: 32,
-                                offset: const Offset(0, 12),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  ProfileAvatar(user: user),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          labelName,
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w800,
-                                            color: cs.onSurface,
-                                          ),
-                                        ),
-                                        if (labelEmail.isNotEmpty)
-                                          Text(
-                                            labelEmail,
-                                            style: GoogleFonts.workSans(
-                                              color: cs.onSurfaceVariant,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (widget.userProvider == null) ...[
-                                const SizedBox(height: 24),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: OutlinedButton.icon(
-                                    onPressed: () =>
-                                        FirebaseAuth.instance.signOut(),
-                                    icon: const Icon(Icons.logout),
-                                    label: const Text('Sign out'),
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: cs.outlineVariant),
-                                      shape: const StadiumBorder(),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-        ),
-      ),
+    return ProfileScreen(
+      user: user,
+      userProfileRepository: widget.userProfileRepository,
+      savedRecipesRepository: widget.savedRecipesRepository,
+      historyRepository: widget.historyRepository,
+      canSignOut: widget.userProvider == null,
+      embedded: true,
     );
   }
 
