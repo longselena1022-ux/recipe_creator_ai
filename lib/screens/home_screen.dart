@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +9,13 @@ import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
 import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
 import 'package:recipe_creator_ai/services/user_profile_repository.dart';
+import 'package:recipe_creator_ai/utils/ingredient_emoji.dart';
+import 'package:recipe_creator_ai/utils/recipe_match.dart';
+import 'package:recipe_creator_ai/widgets/home/blurred_bottom_nav.dart';
+import 'package:recipe_creator_ai/widgets/home/profile_avatar.dart';
+import 'package:recipe_creator_ai/widgets/home/recent_generation_tile.dart';
+import 'package:recipe_creator_ai/widgets/home/saved_recipe_tile.dart';
+import 'package:recipe_creator_ai/widgets/home/seasonal_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -84,21 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _clearPantry() {
     if (_pantryItems.isEmpty) return;
     setState(() => _pantryItems.clear());
-  }
-
-  static String _emojiForIngredient(String name) {
-    final n = name.toLowerCase();
-    if (n.contains('tomato')) return '🍅';
-    if (n.contains('pepper') || n.contains('bell')) return '🫑';
-    if (n.contains('egg')) return '🥚';
-    if (n.contains('cheese') || n.contains('cheddar')) return '🧀';
-    if (n.contains('broccoli')) return '🥦';
-    if (n.contains('pasta') || n.contains('noodle')) return '🍝';
-    if (n.contains('onion')) return '🧅';
-    if (n.contains('garlic')) return '🧄';
-    if (n.contains('milk')) return '🥛';
-    if (n.contains('asparagus')) return '🌿';
-    return '🥗';
   }
 
   Future<void> _generate() async {
@@ -229,7 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context, cs),
+      bottomNavigationBar: BlurredBottomNav(
+        selectedIndex: _navIndex,
+        onSelect: (i) => setState(() => _navIndex = i),
+      ),
     );
   }
 
@@ -291,91 +284,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: _buildProfileAvatar(user, cs),
+              child: ProfileAvatar(user: user),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileAvatar(User? user, ColorScheme cs) {
-    String initial(String s) {
-      final t = s.trim();
-      return t.isEmpty ? '?' : t[0].toUpperCase();
-    }
-
-    final letter = (user?.displayName?.trim().isNotEmpty == true)
-        ? initial(user!.displayName!)
-        : (user?.email?.trim().isNotEmpty == true
-              ? initial(user!.email!)
-              : '?');
-
-    return Container(
-      width: 38,
-      height: 38,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: cs.primaryContainer,
-        boxShadow: [
-          BoxShadow(
-            color: cs.onSurface.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        letter,
-        style: GoogleFonts.plusJakartaSans(
-          color: cs.onPrimaryContainer,
-          fontWeight: FontWeight.w800,
-          fontSize: 15,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context, ColorScheme cs) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          color: cs.surface.withValues(alpha: 0.72),
-          child: SafeArea(
-            top: false,
-            child: NavigationBar(
-              height: 64,
-              backgroundColor: Colors.transparent,
-              indicatorColor: cs.primaryFixed.withValues(alpha: 0.55),
-              selectedIndex: _navIndex,
-              onDestinationSelected: (i) => setState(() => _navIndex = i),
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.kitchen_outlined),
-                  selectedIcon: Icon(Icons.kitchen),
-                  label: 'Inventory',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.restaurant_outlined),
-                  selectedIcon: Icon(Icons.restaurant),
-                  label: 'Recipes',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.bookmark_outline),
-                  selectedIcon: Icon(Icons.bookmark),
-                  label: 'Saved',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outline),
-                  selectedIcon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
@@ -447,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildInventoryCard(context, cs),
                     ],
                     const SizedBox(height: 28),
-                    _buildSeasonalBanner(context, cs),
+                    SeasonalBanner(onAdd: () => _addIngredient('Asparagus')),
                   ],
                 ),
               ),
@@ -702,7 +613,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                _emojiForIngredient(item),
+                                emojiForIngredient(item),
                                 style: const TextStyle(fontSize: 20),
                               ),
                             ),
@@ -800,136 +711,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSeasonalBanner(BuildContext context, ColorScheme cs) {
-    return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 160),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [cs.primary, Color.lerp(cs.primary, cs.primaryContainer, 0.5)!],
-        ),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: cs.primary.withValues(alpha: 0.25),
-            blurRadius: 32,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        clipBehavior: Clip.hardEdge,
-        children: [
-          Positioned(
-            right: -32,
-            bottom: -32,
-            child: Icon(
-              Icons.spa_outlined,
-              size: 200,
-              color: Colors.white.withValues(alpha: 0.12),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(28, 28, 28, 28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'SEASONAL PICK',
-                  style: GoogleFonts.workSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.0,
-                    color: Colors.white.withValues(alpha: 0.75),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Cooking with\nAsparagus',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    height: 1.15,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "It's asparagus season! Add it to your kitchen to unlock fresh spring recipe ideas.",
-                  style: GoogleFonts.workSans(
-                    fontSize: 14,
-                    height: 1.5,
-                    color: Colors.white.withValues(alpha: 0.88),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.25),
-                    foregroundColor: Colors.white,
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    textStyle: GoogleFonts.workSans(fontWeight: FontWeight.w700),
-                  ),
-                  onPressed: () => _addIngredient('Asparagus'),
-                  child: const Text('Add to Kitchen'),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ─── Recipes Tab ────────────────────────────────────────────────────────────
-
-  int _matchPercent(Recipe recipe) {
-    if (_pantryItems.isEmpty || recipe.ingredients.isEmpty) return 85;
-    const staples = ['salt', 'pepper', 'oil', 'butter', 'water', 'flour'];
-    int matches = 0;
-    for (final ing in recipe.ingredients) {
-      final low = ing.toLowerCase();
-      if (staples.any((s) => low.contains(s))) {
-        matches++;
-        continue;
-      }
-      if (_pantryItems.any((p) {
-        final pl = p.toLowerCase();
-        return low.contains(pl) || pl.contains(low.split(' ').first);
-      })) {
-        matches++;
-      }
-    }
-    return ((matches / recipe.ingredients.length) * 100).round().clamp(60, 99);
-  }
-
-  String _statusText(Recipe recipe) {
-    if (_pantryItems.isEmpty) return 'Add ingredients to match';
-    const staples = ['salt', 'pepper', 'oil', 'butter', 'water', 'flour'];
-    final missing = recipe.ingredients.where((ing) {
-      final low = ing.toLowerCase();
-      if (staples.any((s) => low.contains(s))) return false;
-      return !_pantryItems.any((p) {
-        final pl = p.toLowerCase();
-        return low.contains(pl) || pl.contains(low.split(' ').first);
-      });
-    }).length;
-    if (missing == 0) return 'All Ingredients at Home';
-    return 'Need $missing item${missing > 1 ? 's' : ''}';
-  }
-
-  String _estimateTime(Recipe recipe) {
-    final mins = (recipe.steps.length * 7).clamp(10, 90);
-    return '$mins min';
-  }
 
   Widget _buildRecipesTab(
     BuildContext context,
@@ -1059,63 +841,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: items.map((g) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: cs.surfaceContainerLowest,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: cs.onSurface.withValues(alpha: 0.05),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () => _showRecentGeneration(g),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            g.ingredientsText.isEmpty
-                                                ? '(no ingredients text)'
-                                                : g.ingredientsText.length > 56
-                                                    ? '${g.ingredientsText.substring(0, 56)}…'
-                                                    : g.ingredientsText,
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 15,
-                                              color: cs.onSurface,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            '${g.recipes.length} recipe(s)'
-                                            '${g.createdAt != null ? ' · ${_formatDate(g.createdAt!)}' : ''}',
-                                            style: GoogleFonts.workSans(
-                                              fontSize: 12,
-                                              color: cs.onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 14,
-                                      color: cs.onSurfaceVariant,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                          child: RecentGenerationTile(
+                            record: g,
+                            onTap: () => _showRecentGeneration(g),
                           ),
                         );
                       }).toList(),
@@ -1137,8 +865,8 @@ class _HomeScreenState extends State<HomeScreen> {
     User? user,
     ColorScheme cs,
   ) {
-    final pct = _matchPercent(recipe);
-    final status = _statusText(recipe);
+    final pct = matchPercent(recipe, _pantryItems);
+    final status = statusText(recipe, _pantryItems);
     final allHome = status == 'All Ingredients at Home';
 
     return Material(
@@ -1250,7 +978,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _estimateTime(recipe),
+                        estimateTime(recipe),
                         style: GoogleFonts.workSans(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.8),
@@ -1357,8 +1085,8 @@ class _HomeScreenState extends State<HomeScreen> {
     User? user,
     ColorScheme cs,
   ) {
-    final pct = _matchPercent(recipe);
-    final status = _statusText(recipe);
+    final pct = matchPercent(recipe, _pantryItems);
+    final status = statusText(recipe, _pantryItems);
     final allHome = status == 'All Ingredients at Home';
 
     return Container(
@@ -1437,7 +1165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(width: 3),
                   Text(
-                    _estimateTime(recipe),
+                    estimateTime(recipe),
                     style: GoogleFonts.workSans(
                       fontSize: 12,
                       color: cs.onSurfaceVariant,
@@ -1612,117 +1340,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: items.map((entry) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: cs.surfaceContainerLowest,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: cs.onSurface.withValues(alpha: 0.05),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                          child: SavedRecipeTile(
+                            entry: entry,
+                            onTap: () => _showRecipeDetail(
+                              entry.recipe,
+                              savedEntry: entry,
+                              fromIngredients: entry.fromIngredients,
                             ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              onTap: () => _showRecipeDetail(
-                                entry.recipe,
-                                savedEntry: entry,
-                                fromIngredients: entry.fromIngredients,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        color: entry.liked
-                                            ? cs.secondaryContainer
-                                            : cs.surfaceContainerHigh,
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: Icon(
-                                        entry.liked
-                                            ? Icons.favorite
-                                            : Icons.bookmark,
-                                        color: entry.liked
-                                            ? cs.secondary
-                                            : cs.onSurfaceVariant,
-                                        size: 20,
-                                      ),
+                            onToggleLike: () async {
+                              try {
+                                await savedRepo.setLiked(
+                                  user.uid,
+                                  entry.id,
+                                  !entry.liked,
+                                );
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Could not update: $e'),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            entry.recipe.title,
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 15,
-                                              color: cs.onSurface,
-                                            ),
-                                          ),
-                                          Text(
-                                            entry.liked ? 'Liked' : 'Saved',
-                                            style: GoogleFonts.workSans(
-                                              fontSize: 12,
-                                              color: cs.onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: entry.liked ? 'Unlike' : 'Like',
-                                      icon: Icon(
-                                        entry.liked
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: entry.liked
-                                            ? cs.secondary
-                                            : cs.onSurfaceVariant,
-                                      ),
-                                      onPressed: () async {
-                                        try {
-                                          await savedRepo.setLiked(
-                                            user.uid,
-                                            entry.id,
-                                            !entry.liked,
-                                          );
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Could not update: $e',
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      },
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Remove from saved',
-                                      icon: const Icon(Icons.delete_outline),
-                                      color: cs.onSurfaceVariant,
-                                      onPressed: () =>
-                                          _confirmDeleteSaved(entry),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  );
+                                }
+                              }
+                            },
+                            onDelete: () => _confirmDeleteSaved(entry),
                           ),
                         );
                       }).toList(),
@@ -1792,7 +1434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Row(
                                 children: [
-                                  _buildProfileAvatar(user, cs),
+                                  ProfileAvatar(user: user),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
@@ -1847,10 +1489,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ─── Utilities ──────────────────────────────────────────────────────────────
-
-  String _formatDate(DateTime d) {
-    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-  }
 
   void _showRecentGeneration(GenerationRecord g) {
     showModalBottomSheet<void>(
