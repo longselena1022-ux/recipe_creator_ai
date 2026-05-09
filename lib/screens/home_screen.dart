@@ -68,9 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
       _pantryItems.map((e) => e.trim()).where((e) => e.isNotEmpty).join(', ');
 
   void _addIngredientFromField() {
-    final raw = _addIngredientController.text.trim();
-    if (raw.isEmpty) return;
-    _addIngredient(raw);
+    final raw = _addIngredientController.text;
+    if (raw.trim().isEmpty) return;
+    for (final part in raw.split(',')) {
+      _addIngredient(part);
+    }
     _addIngredientController.clear();
   }
 
