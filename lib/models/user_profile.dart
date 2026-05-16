@@ -5,6 +5,7 @@ class UserProfile {
     required this.id,
     required this.name,
     required this.email,
+    this.avatarId,
     this.createdAt,
     this.updatedAt,
   });
@@ -12,6 +13,7 @@ class UserProfile {
   final String id;
   final String name;
   final String email;
+  final String? avatarId;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -21,6 +23,7 @@ class UserProfile {
       id: doc.id,
       name: data['name']?.toString() ?? '',
       email: data['email']?.toString() ?? '',
+      avatarId: data['avatarId']?.toString(),
       createdAt: _dateTimeFromAny(data['createdAt']),
       updatedAt: _dateTimeFromAny(data['updatedAt']),
     );

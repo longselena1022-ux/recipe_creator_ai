@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/main.dart';
+import 'package:recipe_creator_ai/models/profile_avatars.dart';
 import 'package:recipe_creator_ai/models/user_profile.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
 import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
@@ -106,7 +107,14 @@ class ProfileScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _heroCard(context, cs, name: name, email: email, user: u),
+            _heroCard(
+              context,
+              cs,
+              name: name,
+              email: email,
+              user: u,
+              avatarId: profile?.avatarId,
+            ),
             const SizedBox(height: 20),
             _statsRow(context, cs, u),
             const SizedBox(height: 20),
@@ -194,6 +202,7 @@ class ProfileScreen extends StatelessWidget {
     required String name,
     required String email,
     required User user,
+    String? avatarId,
   }) {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -229,16 +238,48 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.4),
-                        width: 2,
-                      ),
+                  GestureDetector(
+                    onTap: userProfileRepository == null
+                        ? null
+                        : () => _pickAvatar(context, user, email, avatarId),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.4),
+                              width: 2,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(3),
+                          child: ProfileAvatar(
+                            user: user,
+                            avatarId: avatarId,
+                            size: 64,
+                          ),
+                        ),
+                        Positioned(
+                          right: -2,
+                          bottom: -2,
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: cs.primary, width: 2),
+                            ),
+                            child: Icon(
+                              Icons.edit_rounded,
+                              size: 13,
+                              color: cs.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    padding: const EdgeInsets.all(2),
-                    child: ProfileAvatar(user: user),
                   ),
                   const SizedBox(width: 14),
                   Container(
@@ -599,6 +640,130 @@ class ProfileScreen extends StatelessWidget {
         );
       }
     }
+  }
+
+  Future<void> _pickAvatar(
+    BuildContext context,
+    User user,
+    String email,
+    String? currentAvatarId,
+  ) async {
+    final cs = Theme.of(context).colorScheme;
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: cs.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 16),
+                  child: Text(
+                    'Choose your avatar',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: cs.onSurface,
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: GridView.count(
+                    crossAxisCount: 4,
+                    shrinkWrap: true,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
+                    children: [
+                      for (final option in kProfileAvatars)
+                        _avatarTile(
+                          ctx,
+                          cs,
+                          option: option,
+                          selected: option.id == currentAvatarId,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selected == null || selected == currentAvatarId) return;
+    try {
+      await userProfileRepository?.setAvatar(
+        userId: user.uid,
+        avatarId: selected,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Avatar updated.')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not update: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _avatarTile(
+    BuildContext context,
+    ColorScheme cs, {
+    required ProfileAvatarOption option,
+    required bool selected,
+  }) {
+    return InkWell(
+      onTap: () => Navigator.of(context).pop(option.id),
+      borderRadius: BorderRadius.circular(999),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: avatarBg(cs, option.id),
+              border: selected
+                  ? Border.all(color: cs.primary, width: 3)
+                  : null,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              option.emoji,
+              style: const TextStyle(fontSize: 30),
+            ),
+          ),
+          if (selected)
+            Positioned(
+              right: -2,
+              bottom: -2,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: cs.surfaceContainerLowest,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check_circle_rounded,
+                  size: 22,
+                  color: cs.primary,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   void _showAbout(BuildContext context) {

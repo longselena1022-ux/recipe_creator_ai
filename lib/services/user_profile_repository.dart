@@ -25,6 +25,16 @@ class UserProfileRepository {
     }, SetOptions(merge: true));
   }
 
+  Future<void> setAvatar({
+    required String userId,
+    required String? avatarId,
+  }) async {
+    await _userDoc(userId).set({
+      'avatarId': avatarId,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   Stream<UserProfile?> watchProfile(String userId) {
     return _userDoc(userId).snapshots().map((doc) {
       if (!doc.exists) return null;
