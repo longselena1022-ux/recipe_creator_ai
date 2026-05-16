@@ -1,0 +1,312 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>My Fridge - PantryChef</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#c2c7d0",
+                    "on-primary-fixed": "#001d34",
+                    "secondary-container": "#c7e8c6",
+                    "on-secondary-fixed": "#05210c",
+                    "inverse-on-surface": "#f0f0f5",
+                    "primary": "#064774",
+                    "on-secondary-container": "#4c6a4e",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#9bcbff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#774894",
+                    "on-tertiary-fixed": "#30004b",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#191c1f",
+                    "surface-tint": "#2e6290",
+                    "secondary-fixed-dim": "#aecfae",
+                    "background": "#f9f9fd",
+                    "on-primary-container": "#b6d8ff",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#2e3034",
+                    "tertiary-fixed": "#f4d9ff",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#2b5f8d",
+                    "surface": "#f9f9fd",
+                    "secondary": "#48654a",
+                    "on-secondary-fixed-variant": "#314d34",
+                    "surface-container-highest": "#e2e2e6",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f3f3f8",
+                    "surface-container": "#ededf2",
+                    "surface-container-high": "#e7e8ec",
+                    "secondary-fixed": "#caebc9",
+                    "on-primary-fixed-variant": "#0c4a76",
+                    "on-tertiary-fixed-variant": "#60327d",
+                    "on-surface": "#191c1f",
+                    "surface-variant": "#e2e2e6",
+                    "outline": "#727780",
+                    "surface-bright": "#f9f9fd",
+                    "tertiary": "#5e307a",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d9dade",
+                    "inverse-primary": "#9bcbff",
+                    "on-tertiary-container": "#edc8ff",
+                    "on-surface-variant": "#42474f",
+                    "tertiary-fixed-dim": "#e5b5ff",
+                    "primary-fixed": "#d0e4ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "grid-gap": "1.5rem",
+                    "container-padding": "1.5rem",
+                    "inline-gap": "1rem",
+                    "touch-target": "2.5rem",
+                    "section-margin": "2.5rem"
+            },
+            "fontFamily": {
+                    "headline-section": ["Plus Jakarta Sans"],
+                    "label-caps": ["Inter"],
+                    "display-hero": ["Plus Jakarta Sans"],
+                    "body-large": ["Inter"],
+                    "title-card": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-section": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                    "label-caps": ["11px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "display-hero": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+                    "body-large": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "title-card": ["18px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f9f9fd;
+            color: #191c1f;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-container-padding h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A high-quality, professional headshot of a smiling home chef in a clean, brightly lit modern kitchen environment. The photography uses soft natural lighting and a shallow depth of field, emphasizing a warm and approachable personality that fits a premium lifestyle application. The color palette is natural and airy with subtle blue and white tones in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnwz9bsSgz3A0lN43lcEcTJ7EU9UoVXh55TRgRhkI2lkin5Vnp-ABREVaZcenLc6E73VH7ais0VXvzCNjqTxftNZhf5WIRr_ebgeY0cik-lGUlMX7sYWldLidpDwkqVWhyA7z8Wi-C9WaxQoE8ZjRFb0RnmfNFyjX4-FKrzjXuYoEuLwBhVAIBTzOLV7FufKEfQuHhHDaldXV2fYGAkPrV3YFztJnkpaMjlzxSp2fSmA0_XOxeYCI_04jRvpjIl6_TcQ4a99VIvU21">
+</div>
+<h1 class="font-headline-section text-headline-section text-primary dark:text-primary-fixed-dim tracking-tight">PantryChef</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors duration-200 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="max-w-4xl mx-auto px-container-padding pt-8">
+<!-- Bento Hero: Stats & Search -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-grid-gap mb-section-margin">
+<!-- Title & Count Card -->
+<div class="md:col-span-7 bg-primary-container text-on-primary-container p-6 rounded-xl shadow-sm border border-outline-variant/20 flex flex-col justify-between min-h-[160px]">
+<div>
+<h2 class="font-display-hero text-headline-section text-white mb-1">My Fridge</h2>
+<p class="font-body-large opacity-90">Manage your fresh essentials</p>
+</div>
+<div class="flex items-end gap-2">
+<span class="text-4xl font-extrabold text-white">42</span>
+<span class="font-label-caps text-white mb-2">ITEMS TOTAL</span>
+</div>
+</div>
+<!-- Add Item Quick Action Card -->
+<div class="md:col-span-5 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant flex flex-col justify-center gap-4">
+<h3 class="font-title-card text-on-surface">Add New Item</h3>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-lg font-body-large focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="Scan or type item..." type="text">
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container py-3 rounded-lg font-title-card flex items-center justify-center gap-2 hover:bg-secondary-container/80 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    Quick Add
+                </button>
+</div>
+</section>
+<!-- Fridge Categories -->
+<div class="space-y-section-margin">
+<!-- Category: Produce -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="eco">eco</span>
+</div>
+<h2 class="font-headline-section text-on-surface">Produce</h2>
+</div>
+<span class="font-label-caps text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">12 ITEMS</span>
+</div>
+<div class="space-y-3">
+<!-- Item Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between hover:shadow-sm transition-shadow">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container">
+<img alt="Bell Peppers" class="w-full h-full object-cover" data-alt="Close-up overhead shot of fresh organic bell peppers in vibrant red, yellow, and green. The lighting is crisp and natural, highlighting the glossy textures of the vegetables against a clean, neutral background. The aesthetic is healthy, fresh, and high-end culinary photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBR3-gW3KjnFFG9ysdnrPkALWqseSFoJjTya1NBXGw7yEPJq1vwlpBPozgiMKNpr6qonVByzg8pYa_gXc230BfTWQMsbb-pzuFlDa2kl0lC7AkaJWv6sxlGBtwb2Sn39WxPGd0KFpPNjuWuZljZIvGkCKqNS9-jnVVks1X8m39ap9yOVCBbVJd4jhQIvHZoO7bSuJdQEu3o7OmTu7mY3JXw8TYUE-8eLxNigDRtIUePSP62MRnaIkiEp0UeAprucN6zIc69YdBYYjX">
+</div>
+<div>
+<h4 class="font-title-card text-on-surface leading-tight">Bell Peppers</h4>
+<p class="text-sm text-on-surface-variant">3 units • Exp. in 4 days</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 active:scale-90 transition-all" title="Use Item">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+</button>
+<button class="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-lg font-label-caps hover:bg-secondary-container/80 active:scale-95 transition-all">
+                                MOVE TO PREP
+                            </button>
+</div>
+</div>
+<!-- Item Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container">
+<img alt="Organic Kale" class="w-full h-full object-cover" data-alt="A bunch of fresh, vibrant green kale leaves with intricate curly edges. The lighting is bright and clear, emphasizing the deep textures and rich green color of the vegetable. The scene is set in a minimalist professional kitchen, conveying a sense of nutritional quality and freshness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXQgz-9cMkYNkTiqTFXQq7pHMQvIW_sJvchM_-CmIXOiuYiugoZ11MKkrwtoRDVu25wlHaI0NPsNK8F2tEWt-2iTQBvHQ1SCEgiJPYbISWRmndxVZohNa07Isy4pw6m6skV6-X605CqDu01Pzuas4B8w8IGoenZsVXQPY9rID2O_CooGKrKT7Hunu8ghNZlRnulcSoJTKeuBRic8_gue65BXa0rxm9irmDke3LPRGuvyuLp6u8zPawKH_xwOVORFL21j850KO5ZiPL">
+</div>
+<div>
+<h4 class="font-title-card text-on-surface leading-tight">Organic Kale</h4>
+<p class="text-sm text-error font-medium">Expires tomorrow</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-primary hover:bg-primary/5 active:scale-90 transition-all">
+<span class="material-symbols-outlined" data-icon="restaurant_menu">restaurant_menu</span>
+</button>
+<button class="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-lg font-label-caps hover:bg-secondary-container/80 active:scale-95 transition-all">
+                                MOVE TO PREP
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: Dairy & Eggs -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="egg">egg</span>
+</div>
+<h2 class="font-headline-section text-on-surface">Dairy &amp; Eggs</h2>
+</div>
+<span class="font-label-caps text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">5 ITEMS</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Compact Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 rounded bg-surface-container overflow-hidden">
+<img alt="Whole Milk" class="w-full h-full object-cover" data-alt="A glass bottle of fresh whole milk sitting on a white stone countertop. The lighting is soft and airy, creating a high-end editorial food aesthetic. The background is clean and slightly out of focus, highlighting the purity and high quality of the dairy product." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3QA4FQo0HAD8nJbV1qQCuFIl3Q5a1nIneWLa4KpwhX4EPMKdgJz3z-zCJAquRz7Gi4pmZTI03El5oyN9waGO-2o_t9Is8Vo-pG3lmAmx3njvKXwS1b4LJ91OesOFywAjnRXKLVbP0JLX3MTEiV6ypVHxbcsrbtW7JjcqoIIgq3yJtas2Y-G-29lBLcizyfUocXOwENf-SznBQM8SH22EOWzWLLT181OLoh7wN_FTg6M452U_f_89X5w4EmwsYvVBKvue3QWTDhXNG">
+</div>
+<span class="bg-error-container text-on-error-container text-[10px] font-bold px-2 py-1 rounded">LOW STOCK</span>
+</div>
+<div>
+<h4 class="font-title-card text-on-surface">Whole Milk</h4>
+<p class="text-sm text-on-surface-variant">Remaining: 200ml</p>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-surface-container text-on-surface-variant py-2 rounded font-label-caps text-[10px] hover:bg-surface-container-high transition-colors">USE</button>
+<button class="flex-1 bg-primary text-white py-2 rounded font-label-caps text-[10px] hover:bg-primary-container transition-colors">ADD TO LIST</button>
+</div>
+</div>
+<!-- Compact Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="w-12 h-12 rounded bg-surface-container overflow-hidden">
+<img alt="Organic Eggs" class="w-full h-full object-cover" data-alt="A carton of farm-fresh organic brown eggs. The image captures the natural texture of the shells in warm, rustic lighting that suggests high-quality, sustainable sourcing. The layout is clean and emphasizes the simplicity of premium ingredients in a modern home kitchen." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9f5w_ixLZ8jiqdZ9owllJYIh2O2NydTr7-gBIXUv_tYbSsGOhJdBRWST0oRvQPd_4cry8EfoF_rS6DjSU0LfBqCDqfpysi_Evj6Oh8xZjFd-fzzFaMSEzWsvqC4kpZkBYqE2tHXJ1kmwglfdIHVRcyJVIjkQrc-ao9azwmVvDZtAAgXhLWT9z0Z_z_ra80gHlk0lLQHo9s_seWHJQLzTWFVyJmlYqiUPPVq9J0YAufcZjVLMEDpRFZk5MWvTFDnfAbLQ6t6Y1h9yc">
+</div>
+</div>
+<div>
+<h4 class="font-title-card text-on-surface">Organic Eggs</h4>
+<p class="text-sm text-on-surface-variant">Quantity: 10 units</p>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-surface-container text-on-surface-variant py-2 rounded font-label-caps text-[10px]">USE</button>
+<button class="flex-1 bg-secondary-container text-on-secondary-container py-2 rounded font-label-caps text-[10px]">MOVE TO PREP</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Category: Protein -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="set_meal">set_meal</span>
+</div>
+<h2 class="font-headline-section text-on-surface">Protein</h2>
+</div>
+<span class="font-label-caps text-on-surface-variant bg-surface-container-high px-3 py-1 rounded-full">3 ITEMS</span>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-lg overflow-hidden bg-surface-container">
+<img alt="Atlantic Salmon" class="w-full h-full object-cover" data-alt="Freshly cut raw salmon fillets with deep orange color and clear marbling. The fish is presented on a minimalist dark stone surface, with soft side lighting that highlights the freshness and quality. The overall mood is sophisticated and culinary-focused." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1z5DHe2xHzlCWXF0YpNh7ymuqbApOlPQ1FhcOMDU7FjQuPLwwuy9qJcznJFUtsdziDiRa3t8--U3yxnDZS95RNCOkHkViZj_B54uz2Uxl-NgOASTW0g0zv-HT5h-RBRbcesQgBbkBO1zoME2AsQ8s6BlqeQzGaWqVERFzn46fUYJuRqVKGF0XwOUEQQUlgir1JRExitL1jxeyBKYVVYC5LlH9UZsThrOVvpnWaWnXUYSjQ9TqEh2uXYK3EIXNHKzZU5Ly7SlRPeWw">
+</div>
+<div>
+<h4 class="font-title-card text-on-surface leading-tight">Atlantic Salmon</h4>
+<p class="text-sm text-on-surface-variant">2 fillets • Freshly stocked</p>
+</div>
+</div>
+<button class="bg-secondary-container text-on-secondary-container px-4 py-2 rounded-lg font-label-caps hover:bg-secondary-container/80 transition-all">
+                            MOVE TO PREP
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 h-20 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-t border-outline-variant dark:border-outline shadow-sm z-50"><div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer">
+  <span class="material-symbols-outlined" data-icon="home">home</span>
+  <span class="font-label-caps text-label-caps mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-container text-on-secondary-container dark:text-secondary-container rounded-xl px-4 py-1.5 transition-all duration-300 scale-90">
+  <span class="material-symbols-outlined" data-icon="kitchen" style="font-variation-settings: 'FILL' 1;">kitchen</span>
+  <span class="font-label-caps text-label-caps mt-1">Fridge</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer">
+  <span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+  <span class="font-label-caps text-label-caps mt-1">Recipes</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer">
+  <span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+  <span class="font-label-caps text-label-caps mt-1">Saved</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer">
+  <span class="material-symbols-outlined" data-icon="person">person</span>
+  <span class="font-label-caps text-label-caps mt-1">Profile</span>
+</div></nav>
+<!-- FAB (Suppressed as per rules for Inventory/Fridge detail screen) -->
+
+
+</body></html>
