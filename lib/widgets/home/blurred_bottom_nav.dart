@@ -36,6 +36,11 @@ class BlurredBottomNav extends StatelessWidget {
                   label: 'Inventory',
                 ),
                 NavigationDestination(
+                  icon: Icon(Icons.ac_unit_outlined),
+                  selectedIcon: Icon(Icons.ac_unit),
+                  label: 'Fridge',
+                ),
+                NavigationDestination(
                   icon: Icon(Icons.restaurant_outlined),
                   selectedIcon: Icon(Icons.restaurant),
                   label: 'Recipes',

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/models/recipe.dart';
 import 'package:recipe_creator_ai/models/saved_recipe_entry.dart';
 import 'package:recipe_creator_ai/models/user_profile.dart';
+import 'package:recipe_creator_ai/screens/fridge_screen.dart';
 import 'package:recipe_creator_ai/screens/profile_screen.dart';
 import 'package:recipe_creator_ai/screens/recipe_detail_screen.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
@@ -105,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _recipes = list;
         _loading = false;
-        _navIndex = 1;
+        _navIndex = 2;
       });
       final user = _currentUser;
       final repo = widget.historyRepository;
@@ -213,6 +214,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 index: _navIndex,
                 children: [
                   _buildInventoryTab(context, cs),
+                  FridgeScreen(
+                    pantryItems: _pantryItems,
+                    onMoveToPrep: (name) {
+                      _addIngredient(name);
+                      setState(() => _navIndex = 0);
+                    },
+                  ),
                   _buildRecipesTab(context, user, repo, savedRepo, cs),
                   _buildSavedTab(context, user, savedRepo, cs),
                   _buildProfileTab(context, user, cs),
