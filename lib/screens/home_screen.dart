@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/models/recipe.dart';
 import 'package:recipe_creator_ai/models/saved_recipe_entry.dart';
+import 'package:recipe_creator_ai/models/user_profile.dart';
 import 'package:recipe_creator_ai/screens/profile_screen.dart';
 import 'package:recipe_creator_ai/screens/recipe_detail_screen.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
@@ -286,7 +287,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: ProfileAvatar(user: user),
+              child:
+                  (widget.userProfileRepository != null && user != null)
+                  ? StreamBuilder<UserProfile?>(
+                      stream: widget.userProfileRepository!
+                          .watchProfile(user.uid),
+                      builder: (context, snapshot) => ProfileAvatar(
+                        user: user,
+                        avatarId: snapshot.data?.avatarId,
+                      ),
+                    )
+                  : ProfileAvatar(user: user),
             ),
           ],
         ),
