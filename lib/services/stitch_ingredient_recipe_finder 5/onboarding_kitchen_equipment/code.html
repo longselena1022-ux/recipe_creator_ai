@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PantryChef Onboarding - Kitchen Equipment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2e3034",
+                        "tertiary-fixed": "#f4d9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f9f9fd",
+                        "secondary-fixed-dim": "#aecfae",
+                        "surface-container-low": "#f3f3f8",
+                        "on-tertiary-fixed-variant": "#60327d",
+                        "inverse-primary": "#9bcbff",
+                        "on-surface": "#191c1f",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#c7e8c6",
+                        "primary-fixed": "#d0e4ff",
+                        "on-tertiary-container": "#edc8ff",
+                        "primary-fixed-dim": "#9bcbff",
+                        "tertiary": "#5e307a",
+                        "inverse-on-surface": "#f0f0f5",
+                        "background": "#f9f9fd",
+                        "surface-container": "#ededf2",
+                        "primary": "#064774",
+                        "tertiary-container": "#774894",
+                        "on-primary-container": "#b6d8ff",
+                        "surface-container-high": "#e7e8ec",
+                        "surface-tint": "#2e6290",
+                        "surface-variant": "#e2e2e6",
+                        "secondary-fixed": "#caebc9",
+                        "on-primary": "#ffffff",
+                        "secondary": "#48654a",
+                        "on-secondary-container": "#4c6a4e",
+                        "surface-dim": "#d9dade",
+                        "on-tertiary-fixed": "#30004b",
+                        "on-secondary-fixed-variant": "#314d34",
+                        "surface-container-highest": "#e2e2e6",
+                        "on-surface-variant": "#42474f",
+                        "tertiary-fixed-dim": "#e5b5ff",
+                        "outline": "#727780",
+                        "primary-container": "#2b5f8d",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9fd",
+                        "on-primary-fixed-variant": "#0c4a76",
+                        "on-background": "#191c1f",
+                        "outline-variant": "#c2c7d0",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#05210c",
+                        "on-primary-fixed": "#001d34"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "touch-target": "2.5rem",
+                        "section-margin": "2.5rem",
+                        "inline-gap": "1rem",
+                        "grid-gap": "1.5rem",
+                        "container-padding": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "headline-section": ["Plus Jakarta Sans"],
+                        "body-large": ["Inter"],
+                        "display-hero": ["Plus Jakarta Sans"],
+                        "title-card": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-section": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                        "body-large": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-hero": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+                        "title-card": ["18px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1.5rem;
+        }
+        .equipment-card.selected {
+            background-color: #c7e8c6; /* secondary-container */
+            border-color: #48654a; /* secondary */
+        }
+        .equipment-card.selected .check-badge {
+            display: flex;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-large">
+<!-- Top AppBar (Task-Focused - No Global Nav) -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-on-surface h-16 flex items-center justify-between px-container-padding max-w-7xl mx-auto">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-display-hero text-title-card text-primary dark:text-primary-fixed-dim">PantryChef</h1>
+<div class="w-10"></div> <!-- Spacer for symmetry -->
+</header>
+<main class="flex-grow pt-24 pb-32 px-container-padding max-w-4xl mx-auto w-full">
+<!-- Progress Bar Section -->
+<div class="mb-10">
+<div class="flex justify-between items-end mb-3">
+<span class="font-label-caps text-label-caps text-on-surface-variant">STEP 3 OF 3</span>
+<span class="font-label-caps text-label-caps text-primary">FINAL STRETCH</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full rounded-full transition-all duration-1000"></div>
+</div>
+</div>
+<!-- Header Hero Section -->
+<section class="mb-section-margin">
+<h2 class="font-headline-section text-headline-section text-on-surface mb-3">What's in your kitchen?</h2>
+<p class="font-body-large text-on-surface-variant max-w-xl">
+                Select the tools you have so we can suggest recipes you can actually make without a trip to the store.
+            </p>
+</section>
+<!-- Bento Grid Selection -->
+<section class="bento-grid" id="equipment-grid">
+<!-- Air Fryer -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="airfryer">airlines</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Air Fryer</span>
+</button>
+<!-- Slow Cooker -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="pot">post</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Slow Cooker</span>
+</button>
+<!-- Blender -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="blender">blender</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Blender</span>
+</button>
+<!-- Cast Iron Skillet -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="skillet">skillet</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Cast Iron Skillet</span>
+</button>
+<!-- Food Processor -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="kitchen">kitchen</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Food Processor</span>
+</button>
+<!-- Oven -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="oven_gen">oven_gen</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Oven</span>
+</button>
+<!-- Microwave -->
+<button class="equipment-card group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl hover:bg-surface-container-low transition-all duration-200 active:scale-95" onclick="toggleSelection(this)">
+<div class="absolute top-2 right-2 check-badge hidden bg-secondary text-on-secondary rounded-full w-6 h-6 items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-16 h-16 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="microwave">microwave</span>
+</div>
+<span class="font-title-card text-label-caps text-center">Microwave</span>
+</button>
+</section>
+<!-- Aesthetic Card (Visual Anchor) -->
+<section class="mt-12 rounded-xl overflow-hidden relative h-48 flex items-center p-8 bg-primary text-on-primary shadow-md">
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" data-alt="A high-end modern kitchen space featuring clean marble countertops and professional-grade stainless steel appliances. The lighting is bright and airy, reflecting a morning sunlit atmosphere. The color palette is composed of cool greys, crisp whites, and deep navy blue accents, perfectly aligning with a premium bento-style culinary design system. The mood is organized, professional, and inspiring for a home chef." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuSiMSTnLswdsiIQsm7CymGUk0v7r8GSDUcfYUENgdR7nLW8fLQor1hgaJyxY-4J1LR6cslkx_jEBX3Nt84u0FT6rQmaKDi-9V5XIbILlCkqp_nHllrjxZpDwIgagBt3emUZm0-3Uo16X1UQPN6aQzAe6NaSa8aN8VtetYCsyQlKHaChs1TPLBaZhGT7gGk-Hi3q_jv00cmeqmR-Pahfr_uYgU0r6Xuk4VBF00QuMaQ0IDfFZx9rgEkV_0KdCHfD6QDFRrWnvzeMYh"/>
+<div class="relative z-10 max-w-sm">
+<h3 class="font-title-card text-headline-section mb-2">Equipped for Success</h3>
+<p class="text-sm opacity-90">Better tools lead to better results. We'll prioritize recipes that use what you already have.</p>
+</div>
+</section>
+</main>
+<!-- Action Bar (Sticky Bottom) -->
+<footer class="fixed bottom-0 left-0 w-full bg-surface-container-lowest/90 backdrop-blur-md border-t border-outline-variant py-6 px-container-padding z-50">
+<div class="max-w-4xl mx-auto flex gap-4">
+<button class="flex-1 py-4 border border-outline text-on-surface font-title-card rounded-xl hover:bg-surface-container transition-colors active:scale-95 duration-150">
+                Back
+            </button>
+<button class="flex-[2] py-4 bg-secondary-container text-on-secondary-container font-title-card rounded-xl hover:opacity-90 transition-opacity active:scale-95 duration-150 shadow-md">
+                Finish Setup
+            </button>
+</div>
+</footer>
+<script>
+        function toggleSelection(element) {
+            element.classList.toggle('selected');
+            const icon = element.querySelector('.material-symbols-outlined');
+            // Adding a little bounce effect on click
+            element.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                element.style.transform = '';
+            }, 100);
+        }
+
+        // Initialize with a few default items selected for visual pop
+        window.onload = () => {
+            const cards = document.querySelectorAll('.equipment-card');
+            if(cards.length > 3) {
+                cards[3].classList.add('selected'); // Cast Iron
+                cards[5].classList.add('selected'); // Oven
+            }
+        };
+    </script>
+</body></html>

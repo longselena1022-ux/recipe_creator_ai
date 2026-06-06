@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>PantryChef Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e2e2e6",
+                        "surface-bright": "#f9f9fd",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#f4d9ff",
+                        "surface-dim": "#d9dade",
+                        "on-secondary-fixed": "#05210c",
+                        "secondary-container": "#c7e8c6",
+                        "surface-container-low": "#f3f3f8",
+                        "inverse-surface": "#2e3034",
+                        "on-primary-fixed-variant": "#0c4a76",
+                        "on-secondary-container": "#4c6a4e",
+                        "surface-variant": "#e2e2e6",
+                        "surface-container-high": "#e7e8ec",
+                        "on-surface": "#191c1f",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#2e6290",
+                        "primary-fixed-dim": "#9bcbff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#edc8ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#60327d",
+                        "secondary": "#48654a",
+                        "outline": "#727780",
+                        "on-primary-container": "#b6d8ff",
+                        "secondary-fixed": "#caebc9",
+                        "tertiary-fixed-dim": "#e5b5ff",
+                        "primary": "#064774",
+                        "on-background": "#191c1f",
+                        "secondary-fixed-dim": "#aecfae",
+                        "inverse-primary": "#9bcbff",
+                        "tertiary": "#5e307a",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d0e4ff",
+                        "tertiary-container": "#774894",
+                        "on-primary-fixed": "#001d34",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9fd",
+                        "on-tertiary-fixed": "#30004b",
+                        "surface-container": "#ededf2",
+                        "primary-container": "#2b5f8d",
+                        "surface": "#f9f9fd",
+                        "outline-variant": "#c2c7d0",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#314d34",
+                        "inverse-on-surface": "#f0f0f5",
+                        "on-surface-variant": "#42474f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-margin": "2.5rem",
+                        "grid-gap": "1.5rem",
+                        "touch-target": "2.5rem",
+                        "inline-gap": "1rem",
+                        "container-padding": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "title-card": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-large": ["Inter"],
+                        "display-hero": ["Plus Jakarta Sans"],
+                        "headline-section": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-card": ["18px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "label-caps": ["11px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "body-large": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-hero": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+                        "headline-section": ["24px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bento-card-hover:hover {
+            transform: translateY(-4px);
+        }
+        .selection-active {
+            border-color: #064774 !important;
+            background-color: #f3f3f8 !important;
+        }
+        .selection-active .icon-container {
+            background-color: #064774 !important;
+            color: #ffffff !important;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-large antialiased min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface-dim h-16 transition-colors duration-200">
+<div class="flex items-center justify-between px-container-padding h-full w-full max-w-7xl mx-auto">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-headline-section text-[14px] text-on-surface-variant uppercase tracking-widest">Step 1 of 3</span>
+<div class="flex gap-1 mt-1">
+<div class="h-1 w-6 rounded-full bg-primary"></div>
+<div class="h-1 w-6 rounded-full bg-surface-container-highest"></div>
+<div class="h-1 w-6 rounded-full bg-surface-container-highest"></div>
+</div>
+</div>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-padding max-w-2xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-section-margin text-center md:text-left">
+<h1 class="font-display-hero text-[32px] md:text-display-hero text-on-surface mb-4 leading-tight">
+                Personalize Your Journey
+            </h1>
+<p class="text-on-surface-variant font-body-large max-w-md mx-auto md:mx-0">
+                Help us tailor your experience by sharing your goals and preferences.
+            </p>
+</section>
+<!-- Section 1: Goals -->
+<section class="mb-section-margin">
+<h2 class="font-headline-section text-headline-section mb-6">What is your primary goal?</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-grid-gap">
+<!-- Goal Card 1 -->
+<button class="bento-card-hover flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl text-center group transition-all duration-200" onclick="toggleSelection(this, 'goal')">
+<div class="icon-container w-16 h-16 rounded-2xl bg-primary-fixed-dim flex items-center justify-center mb-4 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="trending_down">trending_down</span>
+</div>
+<span class="font-title-card text-title-card text-on-surface">Weight Loss</span>
+</button>
+<!-- Goal Card 2 -->
+<button class="bento-card-hover flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl text-center group transition-all duration-200" onclick="toggleSelection(this, 'goal')">
+<div class="icon-container w-16 h-16 rounded-2xl bg-primary-fixed-dim flex items-center justify-center mb-4 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="fitness_center">fitness_center</span>
+</div>
+<span class="font-title-card text-title-card text-on-surface">Build Muscle</span>
+</button>
+<!-- Goal Card 3 -->
+<button class="bento-card-hover flex flex-col items-center justify-center p-6 bg-surface-container-lowest border border-outline-variant rounded-xl text-center group transition-all duration-200" onclick="toggleSelection(this, 'goal')">
+<div class="icon-container w-16 h-16 rounded-2xl bg-primary-fixed-dim flex items-center justify-center mb-4 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="eco">eco</span>
+</div>
+<span class="font-title-card text-title-card text-on-surface">Healthy Lifestyle</span>
+</button>
+</div>
+</section>
+<!-- Section 2: Dietary Preferences -->
+<section class="mb-section-margin">
+<h2 class="font-headline-section text-headline-section mb-6">Dietary Preferences</h2>
+<div class="flex flex-wrap gap-3">
+<!-- Diet Chips -->
+<button class="px-6 py-3 rounded-full border border-outline-variant bg-surface-container-lowest font-body-large text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2" onclick="toggleChip(this)">
+<span class="material-symbols-outlined text-[20px]" data-icon="restaurant">restaurant</span>
+                    Vegetarian
+                </button>
+<button class="px-6 py-3 rounded-full border border-outline-variant bg-surface-container-lowest font-body-large text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2" onclick="toggleChip(this)">
+<span class="material-symbols-outlined text-[20px]" data-icon="grass">grass</span>
+                    Vegan
+                </button>
+<button class="px-6 py-3 rounded-full border border-outline-variant bg-surface-container-lowest font-body-large text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2" onclick="toggleChip(this)">
+<span class="material-symbols-outlined text-[20px]" data-icon="grain">grain</span>
+                    Gluten-Free
+                </button>
+<button class="px-6 py-3 rounded-full border border-outline-variant bg-surface-container-lowest font-body-large text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2" onclick="toggleChip(this)">
+<span class="material-symbols-outlined text-[20px]" data-icon="bolt">bolt</span>
+                    Keto
+                </button>
+<button class="px-6 py-3 rounded-full border border-outline-variant bg-surface-container-lowest font-body-large text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2" onclick="toggleChip(this)">
+<span class="material-symbols-outlined text-[20px]" data-icon="potted_plant">potted_plant</span>
+                    Paleo
+                </button>
+<button class="px-6 py-3 rounded-full border border-outline-variant bg-surface-container-lowest font-body-large text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2" onclick="toggleChip(this)">
+<span class="material-symbols-outlined text-[20px]" data-icon="opacity">opacity</span>
+                    Dairy-Free
+                </button>
+</div>
+</section>
+<!-- Visual Bento Anchor -->
+<div class="rounded-xl overflow-hidden relative h-48 mb-8">
+<img alt="Healthy ingredients" class="w-full h-full object-cover" data-alt="A beautifully arranged overhead shot of various fresh ingredients including vibrant leafy greens, sliced citrus fruits, nuts, and healthy grains in a clean, high-end kitchen setting. The lighting is soft and natural, emphasizing textures and colors that align with a premium culinary aesthetic. The mood is aspirational and organized, reflecting a sophisticated lifestyle of wellness and fine dining. Soft blue and warm wood tones ground the composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxy5bJVHyFnDjNEXTgO7s0DWW3K9z54UVDIPjMR30YXj8TFLYWWXxcS4uGw9SHnGt5d_mvjL4w6fcjVaFvYDzcE5HVq_xlJMDBuLNT493gxYN-dgQvdapmuL40x6t7JixCKDBWJQNRSGT9thNrytCQBfYjSKZe61uyxPy7Uwe_7pq7KgJzS1vRt8RdtU1BAv0ScEBcwgpZspcc9BIz_KSW59oJwssE0le1pNnfL4ju2v7F4asBGjfZCbKXLTSjl7joyFALU8SFRSok"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+<p class="text-white font-title-card">We'll find the perfect recipes for you.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-t border-outline-variant px-4 py-3 pb-safe-area shadow-sm">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-3">
+<button class="w-full md:flex-1 py-4 px-6 bg-secondary-container text-on-secondary-container rounded-xl font-headline-section text-[18px] flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-150">
+                Continue
+                <span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-full md:w-auto py-4 px-8 text-on-surface-variant font-label-caps uppercase hover:bg-surface-container-high rounded-xl transition-colors order-first md:order-last">
+                Skip for now
+            </button>
+</div>
+</footer>
+<script>
+        function toggleSelection(element, type) {
+            if (type === 'goal') {
+                const siblings = element.parentElement.querySelectorAll('button');
+                siblings.forEach(sib => sib.classList.remove('selection-active'));
+                element.classList.add('selection-active');
+            }
+        }
+
+        function toggleChip(element) {
+            element.classList.toggle('bg-primary');
+            element.classList.toggle('text-white');
+            element.classList.toggle('border-primary');
+            
+            const icon = element.querySelector('.material-symbols-outlined');
+            if (element.classList.contains('bg-primary')) {
+                icon.style.fontVariationSettings = "'FILL' 1";
+            } else {
+                icon.style.fontVariationSettings = "'FILL' 0";
+            }
+        }
+    </script>
+</body></html>
