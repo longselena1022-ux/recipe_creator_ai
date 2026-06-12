@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:recipe_creator_ai/models/dietary_preference.dart';
 import 'package:recipe_creator_ai/services/user_profile_repository.dart';
 
 /// A single selectable option backed by a stored key.
@@ -16,15 +17,6 @@ const List<_Option> _goals = [
   _Option('weight_loss', 'Weight Loss', Icons.trending_down),
   _Option('build_muscle', 'Build Muscle', Icons.fitness_center),
   _Option('healthy_lifestyle', 'Healthy Lifestyle', Icons.eco),
-];
-
-const List<_Option> _diets = [
-  _Option('vegetarian', 'Vegetarian', Icons.restaurant),
-  _Option('vegan', 'Vegan', Icons.spa),
-  _Option('gluten_free', 'Gluten-Free', Icons.grain),
-  _Option('keto', 'Keto', Icons.bolt),
-  _Option('paleo', 'Paleo', Icons.forest),
-  _Option('dairy_free', 'Dairy-Free', Icons.water_drop),
 ];
 
 const List<_Option> _skills = [
@@ -414,13 +406,13 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           spacing: 10,
           runSpacing: 10,
           children: [
-            for (final option in _diets)
+            for (final pref in kDietaryPreferences)
               _SelectableChip(
-                option: option,
-                selected: _selectedDiets.contains(option.key),
+                option: _Option(pref.key, pref.label, pref.icon),
+                selected: _selectedDiets.contains(pref.key),
                 onTap: () => setState(() {
-                  if (!_selectedDiets.add(option.key)) {
-                    _selectedDiets.remove(option.key);
+                  if (!_selectedDiets.add(pref.key)) {
+                    _selectedDiets.remove(pref.key);
                   }
                 }),
               ),

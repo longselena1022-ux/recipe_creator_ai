@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/main.dart';
+import 'package:recipe_creator_ai/models/dietary_preference.dart';
 import 'package:recipe_creator_ai/models/profile_avatars.dart';
 import 'package:recipe_creator_ai/models/user_profile.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
@@ -159,7 +160,9 @@ class ProfileScreen extends StatelessWidget {
               _SettingsRow(
                 icon: Icons.tune_rounded,
                 label: 'Dietary preferences',
-                value: 'Coming soon',
+                value: (profile?.dietaryPreferences.isNotEmpty ?? false)
+                    ? formatDietaryPreferences(profile!.dietaryPreferences)
+                    : 'None set',
               ),
               _SettingsRow(
                 icon: Icons.info_outline_rounded,
