@@ -35,6 +35,27 @@ class UserProfileRepository {
     }, SetOptions(merge: true));
   }
 
+  /// Persists the onboarding selections and marks onboarding as finished.
+  ///
+  /// Passing `markComplete: false` records progress without ending the flow.
+  Future<void> saveOnboarding({
+    required String userId,
+    String? goal,
+    String? cookingSkill,
+    List<String>? dietaryPreferences,
+    List<String>? equipment,
+    bool markComplete = true,
+  }) async {
+    await _userDoc(userId).set({
+      'goal': ?goal,
+      'cookingSkill': ?cookingSkill,
+      'dietaryPreferences': ?dietaryPreferences,
+      'equipment': ?equipment,
+      'onboardingComplete': markComplete,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   Stream<UserProfile?> watchProfile(String userId) {
     return _userDoc(userId).snapshots().map((doc) {
       if (!doc.exists) return null;
