@@ -31,14 +31,14 @@ class BlurredBottomNav extends StatelessWidget {
               labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
               destinations: const [
                 NavigationDestination(
-                  icon: Icon(Icons.kitchen_outlined),
-                  selectedIcon: Icon(Icons.kitchen),
-                  label: 'Inventory',
+                  icon: Icon(Icons.auto_awesome_outlined),
+                  selectedIcon: Icon(Icons.auto_awesome),
+                  label: 'Generate',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.ac_unit_outlined),
-                  selectedIcon: Icon(Icons.ac_unit),
-                  label: 'Fridge',
+                  icon: Icon(Icons.inventory_2_outlined),
+                  selectedIcon: Icon(Icons.inventory_2),
+                  label: 'Inventory',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.restaurant_outlined),

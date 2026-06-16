@@ -166,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               _SettingsRow(
                 icon: Icons.info_outline_rounded,
-                label: 'About Recipe Creator AI',
+                label: 'About Skillet',
                 onTap: () => _showAbout(context),
               ),
             ]),
@@ -179,6 +179,29 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icon(Icons.logout_rounded, color: cs.error),
                   label: Text(
                     'Sign out',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w700,
+                      color: cs.error,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: cs.error.withValues(alpha: 0.4)),
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => _confirmDeleteAccount(context, u),
+                  icon: Icon(
+                    Icons.delete_forever_rounded,
+                    color: cs.error,
+                  ),
+                  label: Text(
+                    'Delete account',
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w700,
                       color: cs.error,
@@ -769,10 +792,89 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _confirmDeleteAccount(BuildContext context, User u) async {
+    final cs = Theme.of(context).colorScheme;
+    // Capture context-dependent objects before any await.
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        title: Text(
+          'Delete account?',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+          ),
+        ),
+        content: Text(
+          'This permanently deletes your account, saved recipes, inventory, '
+          'and generation history. This action cannot be undone.',
+          style: GoogleFonts.workSans(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: cs.error,
+              foregroundColor: cs.onError,
+              shape: const StadiumBorder(),
+            ),
+            child: const Text('Delete forever'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      // Best-effort delete all Firestore data.
+      await userProfileRepository?.deleteAllUserData(u.uid);
+
+      // Delete the Firebase Auth account.
+      await u.delete();
+
+      // Auth state change will route the user out automatically.
+      // Dismiss any open dialogs/sheets just in case.
+      navigator.popUntil((route) => route.isFirst);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // Sign the user out so they are forced to re-authenticate, after
+        // which they can try again.
+        await FirebaseAuth.instance.signOut();
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Please sign in again and then retry deleting your account.',
+            ),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      } else {
+        messenger.showSnackBar(
+          SnackBar(content: Text('Could not delete account: ${e.message}')),
+        );
+      }
+    } catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Could not delete account: $e')),
+      );
+    }
+  }
+
   void _showAbout(BuildContext context) {
     showAboutDialog(
       context: context,
-      applicationName: 'Recipe Creator AI',
+      applicationName: 'Skillet',
       applicationVersion: '1.0.0',
       applicationLegalese: 'Crafted with calm capability.',
     );

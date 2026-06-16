@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 enum FridgeCategory {
@@ -10,6 +11,13 @@ enum FridgeCategory {
 
   final String label;
   final IconData icon;
+
+  static FridgeCategory fromName(String? name) {
+    return FridgeCategory.values.firstWhere(
+      (c) => c.name == name,
+      orElse: () => FridgeCategory.pantry,
+    );
+  }
 }
 
 class FridgeItem {
@@ -30,4 +38,27 @@ class FridgeItem {
   final bool lowStock;
 
   bool get expiringSoon => expiresInDays != null && expiresInDays! <= 1;
+
+  factory FridgeItem.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    return FridgeItem(
+      name: data['name'] as String? ?? '',
+      category: FridgeCategory.fromName(data['category'] as String?),
+      emoji: data['emoji'] as String? ?? '🧺',
+      subtitle: data['subtitle'] as String?,
+      expiresInDays: data['expiresInDays'] as int?,
+      lowStock: data['lowStock'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'category': category.name,
+      'emoji': emoji,
+      if (subtitle != null) 'subtitle': subtitle,
+      if (expiresInDays != null) 'expiresInDays': expiresInDays,
+      'lowStock': lowStock,
+    };
+  }
 }

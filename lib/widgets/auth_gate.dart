@@ -5,6 +5,7 @@ import 'package:recipe_creator_ai/models/user_profile.dart';
 import 'package:recipe_creator_ai/screens/home_screen.dart';
 import 'package:recipe_creator_ai/screens/login_screen.dart';
 import 'package:recipe_creator_ai/screens/onboarding/onboarding_flow.dart';
+import 'package:recipe_creator_ai/services/inventory_repository.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
 import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
@@ -74,6 +75,8 @@ class _SignedInRouter extends StatelessWidget {
           savedRecipesRepository:
               SavedRecipesRepository(FirebaseFirestore.instance),
           userProfileRepository: userProfileRepository,
+          inventoryRepository:
+              InventoryRepository(FirebaseFirestore.instance),
         );
       },
     );

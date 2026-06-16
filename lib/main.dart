@@ -29,7 +29,7 @@ class RecipeCreatorApp extends StatelessWidget {
         return AppThemeScope(
           controller: themeController,
           child: MaterialApp(
-            title: 'Recipe Creator AI',
+            title: 'Skillet',
             theme: buildAppTheme(lightColorScheme),
             darkTheme: buildAppTheme(darkColorScheme),
             themeMode: themeController.mode,

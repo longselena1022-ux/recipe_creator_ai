@@ -62,4 +62,40 @@ class UserProfileRepository {
       return UserProfile.fromDoc(doc);
     });
   }
+
+  /// Deletes all Firestore data for the given user: subcollections
+  /// (savedRecipes, inventory, generations) and the profile document itself.
+  ///
+  /// Each subcollection is deleted independently so one failure does not
+  /// prevent the others from being attempted. The profile document is deleted
+  /// last. Throws only if the final profile-doc deletion fails.
+  Future<void> deleteAllUserData(String userId) async {
+    final subcollections = ['savedRecipes', 'inventory', 'generations'];
+
+    for (final sub in subcollections) {
+      try {
+        final colRef = _userDoc(userId).collection(sub);
+        // Firestore does not support recursive deletes on the client, so we
+        // fetch all docs and delete them in a WriteBatch.
+        bool hasMore = true;
+        while (hasMore) {
+          final snap = await colRef.limit(500).get();
+          if (snap.docs.isEmpty) {
+            hasMore = false;
+            break;
+          }
+          final batch = _firestore.batch();
+          for (final doc in snap.docs) {
+            batch.delete(doc.reference);
+          }
+          await batch.commit();
+          if (snap.docs.length < 500) hasMore = false;
+        }
+      } catch (_) {
+        // Best-effort: continue deleting remaining subcollections.
+      }
+    }
+
+    await _userDoc(userId).delete();
+  }
 }

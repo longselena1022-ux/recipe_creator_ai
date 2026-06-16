@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/models/fridge_item.dart';
+import 'package:recipe_creator_ai/services/inventory_repository.dart';
 
 class FridgeScreen extends StatefulWidget {
   const FridgeScreen({
     super.key,
     this.onMoveToPrep,
     this.pantryItems = const [],
+    this.inventoryRepository,
+    this.userId,
   });
 
   final void Function(String ingredient)? onMoveToPrep;
   final List<String> pantryItems;
+  final InventoryRepository? inventoryRepository;
+  final String? userId;
 
   @override
   State<FridgeScreen> createState() => _FridgeScreenState();
@@ -19,55 +24,56 @@ class FridgeScreen extends StatefulWidget {
 class _FridgeScreenState extends State<FridgeScreen> {
   final _searchController = TextEditingController();
 
-  final List<FridgeItem> _items = [
-    const FridgeItem(
+  // Hardcoded demo list used only when no repository/userId is provided.
+  static const List<FridgeItem> _demoItems = [
+    FridgeItem(
       name: 'Bell Peppers',
       category: FridgeCategory.produce,
       emoji: '🫑',
       subtitle: '3 units',
       expiresInDays: 4,
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Organic Kale',
       category: FridgeCategory.produce,
       emoji: '🥬',
       subtitle: '1 bunch',
       expiresInDays: 1,
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Cherry Tomatoes',
       category: FridgeCategory.produce,
       emoji: '🍅',
       subtitle: '1 pint',
       expiresInDays: 5,
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Whole Milk',
       category: FridgeCategory.dairy,
       emoji: '🥛',
       subtitle: 'Remaining: 200ml',
       lowStock: true,
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Organic Eggs',
       category: FridgeCategory.dairy,
       emoji: '🥚',
       subtitle: '10 units',
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Atlantic Salmon',
       category: FridgeCategory.protein,
       emoji: '🐟',
       subtitle: '2 fillets · Freshly stocked',
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Chicken Breast',
       category: FridgeCategory.protein,
       emoji: '🍗',
       subtitle: '4 pieces',
       expiresInDays: 2,
     ),
-    const FridgeItem(
+    FridgeItem(
       name: 'Olive Oil',
       category: FridgeCategory.pantry,
       emoji: '🫒',
@@ -75,26 +81,51 @@ class _FridgeScreenState extends State<FridgeScreen> {
     ),
   ];
 
+  // Local list used only in demo mode (no repository).
+  late List<FridgeItem> _localItems;
+
+  bool get _hasRepo =>
+      widget.inventoryRepository != null && widget.userId != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _localItems = List<FridgeItem>.from(_demoItems);
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
-  void _quickAdd() {
+  void _quickAdd(List<FridgeItem> currentItems) {
     final raw = _searchController.text.trim();
     if (raw.isEmpty) return;
-    setState(() {
-      _items.add(
-        FridgeItem(
-          name: raw,
-          category: FridgeCategory.pantry,
-          emoji: '🧺',
-          subtitle: 'Just added',
-        ),
-      );
-      _searchController.clear();
-    });
+    final newItem = FridgeItem(
+      name: raw,
+      category: FridgeCategory.pantry,
+      emoji: '🧺',
+      subtitle: 'Just added',
+    );
+    if (_hasRepo) {
+      widget.inventoryRepository!.addItem(widget.userId!, newItem);
+    } else {
+      setState(() {
+        _localItems.add(newItem);
+      });
+    }
+    _searchController.clear();
+  }
+
+  void _removeItem(FridgeItem item) {
+    if (_hasRepo) {
+      widget.inventoryRepository!.removeItem(widget.userId!, item.name);
+    } else {
+      setState(() {
+        _localItems.removeWhere((e) => e.name == item.name);
+      });
+    }
   }
 
   void _moveToPrep(FridgeItem item) {
@@ -111,9 +142,33 @@ class _FridgeScreenState extends State<FridgeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_hasRepo) {
+      return StreamBuilder<List<FridgeItem>>(
+        stream: widget.inventoryRepository!.watchItems(widget.userId!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Could not load inventory.\n${snapshot.error}',
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+          final items = snapshot.data ?? [];
+          return _buildContent(context, items);
+        },
+      );
+    }
+    return _buildContent(context, _localItems);
+  }
+
+  Widget _buildContent(BuildContext context, List<FridgeItem> items) {
     final cs = Theme.of(context).colorScheme;
     final byCategory = <FridgeCategory, List<FridgeItem>>{};
-    for (final item in _items) {
+    for (final item in items) {
       byCategory.putIfAbsent(item.category, () => []).add(item);
     }
 
@@ -131,13 +186,27 @@ class _FridgeScreenState extends State<FridgeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildBentoHero(cs),
+              _buildBentoHero(cs, items),
               const SizedBox(height: 32),
               for (final category in FridgeCategory.values)
                 if (byCategory[category]?.isNotEmpty ?? false) ...[
                   _buildCategorySection(cs, category, byCategory[category]!),
                   const SizedBox(height: 32),
                 ],
+              if (items.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 32),
+                    child: Text(
+                      'Your inventory is empty.\nAdd your first item above!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -145,12 +214,12 @@ class _FridgeScreenState extends State<FridgeScreen> {
     );
   }
 
-  Widget _buildBentoHero(ColorScheme cs) {
+  Widget _buildBentoHero(ColorScheme cs, List<FridgeItem> items) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 640;
-        final title = _buildTitleCard(cs);
-        final add = _buildAddCard(cs);
+        final title = _buildTitleCard(cs, items);
+        final add = _buildAddCard(cs, items);
         if (wide) {
           return IntrinsicHeight(
             child: Row(
@@ -171,7 +240,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
     );
   }
 
-  Widget _buildTitleCard(ColorScheme cs) {
+  Widget _buildTitleCard(ColorScheme cs, List<FridgeItem> items) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -223,7 +292,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${_items.length}',
+                '${items.length}',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 40,
                   fontWeight: FontWeight.w900,
@@ -251,7 +320,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
     );
   }
 
-  Widget _buildAddCard(ColorScheme cs) {
+  Widget _buildAddCard(ColorScheme cs, List<FridgeItem> items) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -275,7 +344,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
           const SizedBox(height: 12),
           TextField(
             controller: _searchController,
-            onSubmitted: (_) => _quickAdd(),
+            onSubmitted: (_) => _quickAdd(items),
             decoration: InputDecoration(
               prefixIcon: Icon(Icons.search, color: cs.outline, size: 20),
               hintText: 'Scan or type item…',
@@ -308,7 +377,7 @@ class _FridgeScreenState extends State<FridgeScreen> {
           SizedBox(
             height: 44,
             child: FilledButton.icon(
-              onPressed: _quickAdd,
+              onPressed: () => _quickAdd(items),
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Quick Add'),
               style: FilledButton.styleFrom(
@@ -473,27 +542,42 @@ class _FridgeScreenState extends State<FridgeScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          FilledButton(
-            onPressed: inPantry ? null : () => _moveToPrep(item),
-            style: FilledButton.styleFrom(
-              backgroundColor: cs.secondaryContainer,
-              foregroundColor: cs.onSecondaryContainer,
-              disabledBackgroundColor: cs.surfaceContainerHigh,
-              disabledForegroundColor: cs.onSurfaceVariant,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 10,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FilledButton(
+                onPressed: inPantry ? null : () => _moveToPrep(item),
+                style: FilledButton.styleFrom(
+                  backgroundColor: cs.secondaryContainer,
+                  foregroundColor: cs.onSecondaryContainer,
+                  disabledBackgroundColor: cs.surfaceContainerHigh,
+                  disabledForegroundColor: cs.onSurfaceVariant,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  textStyle: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                child: Text(inPantry ? 'IN PREP' : 'MOVE TO PREP'),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () => _removeItem(item),
+                icon: Icon(Icons.delete_outline, color: cs.error, size: 20),
+                tooltip: 'Remove item',
+                style: IconButton.styleFrom(
+                  padding: const EdgeInsets.all(8),
+                  minimumSize: const Size(36, 36),
+                ),
               ),
-              textStyle: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.0,
-              ),
-            ),
-            child: Text(inPantry ? 'IN PREP' : 'MOVE TO PREP'),
+            ],
           ),
         ],
       ),

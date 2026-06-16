@@ -7,6 +7,7 @@ import 'package:recipe_creator_ai/models/user_profile.dart';
 import 'package:recipe_creator_ai/screens/fridge_screen.dart';
 import 'package:recipe_creator_ai/screens/profile_screen.dart';
 import 'package:recipe_creator_ai/screens/recipe_detail_screen.dart';
+import 'package:recipe_creator_ai/services/inventory_repository.dart';
 import 'package:recipe_creator_ai/services/recipe_generation_service.dart';
 import 'package:recipe_creator_ai/services/recipe_history_repository.dart';
 import 'package:recipe_creator_ai/services/saved_recipes_repository.dart';
@@ -26,6 +27,7 @@ class HomeScreen extends StatefulWidget {
     this.historyRepository,
     this.savedRecipesRepository,
     this.userProfileRepository,
+    this.inventoryRepository,
     this.userProvider,
   });
 
@@ -33,6 +35,7 @@ class HomeScreen extends StatefulWidget {
   final RecipeHistoryRepository? historyRepository;
   final SavedRecipesRepository? savedRecipesRepository;
   final UserProfileRepository? userProfileRepository;
+  final InventoryRepository? inventoryRepository;
   final User? Function()? userProvider;
 
   @override
@@ -220,6 +223,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       _addIngredient(name);
                       setState(() => _navIndex = 0);
                     },
+                    inventoryRepository: widget.inventoryRepository,
+                    userId: _currentUser?.uid,
                   ),
                   _buildRecipesTab(context, user, repo, savedRepo, cs),
                   _buildSavedTab(context, user, savedRepo, cs),
@@ -283,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: Text(
-                'Recipe Creator AI',
+                'Skillet',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 20,
@@ -783,7 +788,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Add ingredients on the Inventory tab\nand tap Find Recipes.',
+                  'Add ingredients on the Generate tab\nand tap Find Recipes.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.workSans(
                     fontSize: 15,
@@ -795,8 +800,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Center(
                   child: OutlinedButton.icon(
                     onPressed: () => setState(() => _navIndex = 0),
-                    icon: const Icon(Icons.kitchen_outlined),
-                    label: const Text('Go to Inventory'),
+                    icon: const Icon(Icons.auto_awesome_outlined),
+                    label: const Text('Go to Generate'),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: cs.outline),
                       shape: const StadiumBorder(),
