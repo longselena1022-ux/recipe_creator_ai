@@ -30,9 +30,7 @@ class RecipeCreatorApp extends StatelessWidget {
           controller: themeController,
           child: MaterialApp(
             title: 'Skillet',
-            theme: buildAppTheme(lightColorScheme),
-            darkTheme: buildAppTheme(darkColorScheme),
-            themeMode: themeController.mode,
+            theme: buildAppTheme(themeController.current.colorScheme),
             home: const AuthGate(),
           ),
         );

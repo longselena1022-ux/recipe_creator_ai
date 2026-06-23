@@ -1,51 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:recipe_creator_ai/theme/app_themes.dart';
 
 class ThemeController extends ChangeNotifier {
-  ThemeController({ThemeMode initial = ThemeMode.system}) : _mode = initial;
+  ThemeController({String? initialThemeId})
+      : _themeId = initialThemeId ?? kDefaultThemeId;
 
-  static const _prefsKey = 'theme_mode';
+  static const _prefsKey = 'app_theme_id';
+  // Legacy key from the old light/dark/system selector. Migrated on load.
+  static const _legacyKey = 'theme_mode';
 
-  ThemeMode _mode;
-  ThemeMode get mode => _mode;
+  String _themeId;
+  String get themeId => _themeId;
+
+  /// The fully resolved theme currently in effect.
+  AppThemeOption get current => themeById(_themeId);
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    final stored = prefs.getString(_prefsKey);
-    final next = _decode(stored);
-    if (next != _mode) {
-      _mode = next;
+    var stored = prefs.getString(_prefsKey);
+
+    // One-time migration from the previous theme_mode preference.
+    if (stored == null) {
+      final legacy = prefs.getString(_legacyKey);
+      if (legacy == 'dark') {
+        stored = 'dark';
+      } else if (legacy == 'light') {
+        stored = 'light';
+      }
+      if (stored != null) {
+        await prefs.setString(_prefsKey, stored);
+        await prefs.remove(_legacyKey);
+      }
+    }
+
+    if (stored != null &&
+        stored != _themeId &&
+        kAppThemes.any((t) => t.id == stored)) {
+      _themeId = stored;
       notifyListeners();
     }
   }
 
-  Future<void> setMode(ThemeMode mode) async {
-    if (mode == _mode) return;
-    _mode = mode;
+  Future<void> setTheme(String id) async {
+    if (id == _themeId || !kAppThemes.any((t) => t.id == id)) return;
+    _themeId = id;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefsKey, _encode(mode));
-  }
-
-  static String _encode(ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.light:
-        return 'light';
-      case ThemeMode.dark:
-        return 'dark';
-      case ThemeMode.system:
-        return 'system';
-    }
-  }
-
-  static ThemeMode _decode(String? value) {
-    switch (value) {
-      case 'light':
-        return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      default:
-        return ThemeMode.system;
-    }
+    await prefs.setString(_prefsKey, id);
   }
 }
