@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,6 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _error;
   int _navIndex = 0;
 
+  // Latest profile, kept in sync so generation can respect the user's stored
+  // dietary preferences and cooking skill.
+  UserProfile? _profile;
+  StreamSubscription<UserProfile?>? _profileSub;
+
   static const List<String> _quickAddSuggestions = [
     'Onion',
     'Garlic',
@@ -64,7 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final user = _currentUser;
+    final repo = widget.userProfileRepository;
+    if (user != null && repo != null) {
+      _profileSub = repo.watchProfile(user.uid).listen((profile) {
+        if (mounted) setState(() => _profile = profile);
+      });
+    }
+  }
+
+  @override
   void dispose() {
+    _profileSub?.cancel();
     _addIngredientController.dispose();
     super.dispose();
   }
@@ -104,7 +124,13 @@ class _HomeScreenState extends State<HomeScreen> {
       _error = null;
     });
     try {
-      final list = await widget.generationService.generate(_ingredientsPrompt);
+      final list = await widget.generationService.generate(
+        _ingredientsPrompt,
+        dietaryPreferences: _profile?.dietaryPreferences ?? const [],
+        cookingSkill: _profile?.cookingSkill,
+        goal: _profile?.goal,
+        equipment: _profile?.equipment ?? const [],
+      );
       if (!mounted) return;
       setState(() {
         _recipes = list;
@@ -162,9 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: const Text('Remove saved recipe?'),
         content: Text('Remove "${entry.recipe.title}" from your saved list?'),
         actions: [
@@ -189,9 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not remove: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not remove: $e')));
       }
     }
   }
@@ -287,24 +311,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Expanded(
-              child: Text(
-                'Skillet',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
-                  color: cs.primary,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.restaurant_menu, color: cs.primary, size: 28),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Skillet',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: cs.primary,
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child:
-                  (widget.userProfileRepository != null && user != null)
+              child: (widget.userProfileRepository != null && user != null)
                   ? StreamBuilder<UserProfile?>(
-                      stream: widget.userProfileRepository!
-                          .watchProfile(user.uid),
+                      stream: widget.userProfileRepository!.watchProfile(
+                        user.uid,
+                      ),
                       builder: (context, snapshot) => ProfileAvatar(
                         user: user,
                         avatarId: snapshot.data?.avatarId,
@@ -421,15 +450,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: cs.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.add_circle_outline, color: cs.primary, size: 22),
+                child: Icon(
+                  Icons.add_circle_outline,
+                  color: cs.primary,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'Add Ingredients',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: cs.onSurface,
+              Flexible(
+                child: Text(
+                  'Add Ingredients',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: cs.onSurface,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -553,7 +590,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 3,
+                ),
                 decoration: BoxDecoration(
                   color: cs.primaryFixed,
                   borderRadius: BorderRadius.circular(999),
@@ -686,10 +726,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Text(
                 _error!,
-                style: GoogleFonts.workSans(
-                  color: cs.error,
-                  fontSize: 13,
-                ),
+                style: GoogleFonts.workSans(color: cs.error, fontSize: 13),
               ),
             ),
             const SizedBox(height: 12),
@@ -832,12 +869,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
                 const SizedBox(height: 24),
-                _buildFeaturedCard(context, _recipes.first, savedRepo, user, cs),
+                _buildFeaturedCard(
+                  context,
+                  _recipes.first,
+                  savedRepo,
+                  user,
+                  cs,
+                ),
                 const SizedBox(height: 12),
-                ..._recipes.skip(1).map(
+                ..._recipes
+                    .skip(1)
+                    .map(
                       (r) => Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: _buildRecipeCard(context, r, savedRepo, user, cs),
+                        child: _buildRecipeCard(
+                          context,
+                          r,
+                          savedRepo,
+                          user,
+                          cs,
+                        ),
                       ),
                     ),
               ],
@@ -858,9 +909,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (items.isEmpty) {
                       return Text(
                         'Saved generations will appear here.',
-                        style: GoogleFonts.workSans(
-                          color: cs.onSurfaceVariant,
-                        ),
+                        style: GoogleFonts.workSans(color: cs.onSurfaceVariant),
                       );
                     }
                     return Column(
@@ -901,13 +950,17 @@ class _HomeScreenState extends State<HomeScreen> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         borderRadius: BorderRadius.circular(28),
-        onTap: () => _showRecipeDetail(recipe, fromIngredients: _ingredientsPrompt),
+        onTap: () =>
+            _showRecipeDetail(recipe, fromIngredients: _ingredientsPrompt),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [cs.primary, Color.lerp(cs.primary, cs.primaryContainer, 0.5)!],
+              colors: [
+                cs.primary,
+                Color.lerp(cs.primary, cs.primaryContainer, 0.5)!,
+              ],
             ),
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
@@ -948,7 +1001,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.auto_awesome, size: 12, color: Colors.white),
+                            const Icon(
+                              Icons.auto_awesome,
+                              size: 12,
+                              color: Colors.white,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               "Chef's Choice",
@@ -1042,7 +1099,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             recipe,
                             fromIngredients: _ingredientsPrompt,
                           ),
-                          icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                          icon: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 16,
+                          ),
                           label: const Text('View Recipe'),
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -1068,7 +1128,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Recipe saved.')),
+                                  const SnackBar(
+                                    content: Text('Recipe saved.'),
+                                  ),
                                 );
                               }
                             } catch (e) {
@@ -1129,7 +1191,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(24),
-        onTap: () => _showRecipeDetail(recipe, fromIngredients: _ingredientsPrompt),
+        onTap: () =>
+            _showRecipeDetail(recipe, fromIngredients: _ingredientsPrompt),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
@@ -1275,7 +1338,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(width: 2),
-                  Icon(Icons.arrow_forward_ios_rounded, size: 12, color: cs.primary),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: cs.primary,
+                  ),
                 ],
               ),
             ],
@@ -1477,7 +1544,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fromIngredients: g.ingredientsText,
                                 );
                                 messenger.showSnackBar(
-                                  const SnackBar(content: Text('Recipe saved.')),
+                                  const SnackBar(
+                                    content: Text('Recipe saved.'),
+                                  ),
                                 );
                               } catch (e) {
                                 messenger.showSnackBar(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:recipe_creator_ai/models/fridge_item.dart';
 import 'package:recipe_creator_ai/services/inventory_repository.dart';
+import 'package:recipe_creator_ai/utils/ingredient_emoji.dart';
 
 class FridgeScreen extends StatefulWidget {
   const FridgeScreen({
@@ -104,8 +105,8 @@ class _FridgeScreenState extends State<FridgeScreen> {
     if (raw.isEmpty) return;
     final newItem = FridgeItem(
       name: raw,
-      category: FridgeCategory.pantry,
-      emoji: '🧺',
+      category: categoryForIngredient(raw),
+      emoji: emojiForIngredient(raw),
       subtitle: 'Just added',
     );
     if (_hasRepo) {
@@ -483,7 +484,10 @@ class _FridgeScreenState extends State<FridgeScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
-            child: Text(item.emoji, style: const TextStyle(fontSize: 28)),
+            child: Text(
+              emojiForIngredient(item.name),
+              style: const TextStyle(fontSize: 28),
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(

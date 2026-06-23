@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_creator_ai/utils/ingredient_emoji.dart';
 
 enum FridgeCategory {
   produce(label: 'Produce', icon: Icons.eco),
@@ -18,6 +19,32 @@ enum FridgeCategory {
       orElse: () => FridgeCategory.pantry,
     );
   }
+}
+
+// Emoji groups (from [emojiForIngredient]) that map to each inventory category.
+// Anything not listed falls back to [FridgeCategory.pantry].
+const Set<String> _dairyEmoji = {'🧈', '🧀', '🥛', '🥚'};
+const Set<String> _proteinEmoji = {
+  '🥓', '🍗', '🦃', '🥩', '🍖', '🍤', '🦞', '🦀', '🦑', '🦪', '🐟', '🌭',
+};
+const Set<String> _produceEmoji = {
+  // Vegetables & aromatics.
+  '🍆', '🍅', '🌶️', '🫑', '🥦', '🥬', '🥒', '🥕', '🌽', '🧅', '🧄', '🥔',
+  '🍄', '🥑', '🫚', '🫒', '🌿',
+  // Fruits.
+  '🍎', '🍌', '🍇', '🍊', '🍓', '🫐', '🍒', '🍑', '🍐', '🍋', '🥭', '🍍',
+  '🥥', '🍉', '🍈', '🥝',
+};
+
+/// Infers a sensible [FridgeCategory] for a free-typed ingredient name, reusing
+/// the same classification that powers [emojiForIngredient] so the icon and the
+/// section it lands in always agree.
+FridgeCategory categoryForIngredient(String name) {
+  final emoji = emojiForIngredient(name);
+  if (_dairyEmoji.contains(emoji)) return FridgeCategory.dairy;
+  if (_proteinEmoji.contains(emoji)) return FridgeCategory.protein;
+  if (_produceEmoji.contains(emoji)) return FridgeCategory.produce;
+  return FridgeCategory.pantry;
 }
 
 class FridgeItem {

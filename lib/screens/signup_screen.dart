@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:recipe_creator_ai/services/user_profile_repository.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({
-    super.key,
-    required this.userProfileRepository,
-  });
+  const SignupScreen({super.key, required this.userProfileRepository});
 
   final UserProfileRepository userProfileRepository;
 
@@ -68,11 +65,8 @@ class _SignupScreenState extends State<SignupScreen> {
     final name = _nameController.text.trim();
     final password = _passwordController.text;
     try {
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
       final user = credential.user;
       if (user != null) {
         if (name.isNotEmpty) {
@@ -86,14 +80,14 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_messageForCode(e.code))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_messageForCode(e.code))));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Something went wrong: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Something went wrong: $e')));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -134,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
             Icon(Icons.restaurant_menu, color: colors.primary, size: 22),
             const SizedBox(width: 6),
             Text(
-              'PantryChef',
+              'Skillet',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: colors.primary,
                 fontWeight: FontWeight.w800,
@@ -168,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'JOIN PANTRYCHEF',
+                        'JOIN SKILLET',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,

@@ -16,7 +16,10 @@ class SeasonalBanner extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [cs.primary, Color.lerp(cs.primary, cs.primaryContainer, 0.5)!],
+          colors: [
+            cs.primary,
+            Color.lerp(cs.primary, cs.primaryContainer, 0.5)!,
+          ],
         ),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
@@ -46,7 +49,7 @@ class SeasonalBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'SEASONAL PICK',
+                  'HEALTHY PICK',
                   style: GoogleFonts.workSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -67,7 +70,7 @@ class SeasonalBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "It's asparagus season! Add it to your kitchen to unlock fresh spring recipe ideas.",
+                  "It's asparagus time! Add it to your kitchen to unlock fresh healthy recipe ideas.",
                   style: GoogleFonts.workSans(
                     fontSize: 14,
                     height: 1.5,
@@ -84,7 +87,9 @@ class SeasonalBanner extends StatelessWidget {
                       horizontal: 20,
                       vertical: 12,
                     ),
-                    textStyle: GoogleFonts.workSans(fontWeight: FontWeight.w700),
+                    textStyle: GoogleFonts.workSans(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   onPressed: onAdd,
                   child: const Text('Add to Kitchen'),

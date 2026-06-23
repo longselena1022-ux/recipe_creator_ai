@@ -171,12 +171,12 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.restaurant_menu, color: cs.primary, size: 20),
+                  Icon(Icons.restaurant_menu, color: cs.primary, size: 28),
                   const SizedBox(width: 6),
                   Text(
-                    'PantryChef',
+                    'Skillet',
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
+                      fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: cs.primary,
                     ),
@@ -264,8 +264,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
               onPressed: _saving
                   ? null
                   : isLast
-                      ? () => _persist(markComplete: true)
-                      : _next,
+                  ? () => _persist(markComplete: true)
+                  : _next,
               style: FilledButton.styleFrom(
                 backgroundColor: cs.primary,
                 foregroundColor: cs.onPrimary,
@@ -308,8 +308,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
             onPressed: _saving
                 ? null
                 : _step == 0
-                    ? () => _persist(markComplete: true)
-                    : _back,
+                ? () => _persist(markComplete: true)
+                : _back,
             style: TextButton.styleFrom(foregroundColor: cs.onSurfaceVariant),
             child: Text(
               _step == 0 ? 'Skip for now' : 'Back',
@@ -490,7 +490,8 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
           cs: cs,
           icon: Icons.workspace_premium,
           title: 'Equipped for success',
-          body: "Better tools lead to better results. We'll prioritize recipes "
+          body:
+              "Better tools lead to better results. We'll prioritize recipes "
               'that use what you already have.',
         ),
       ],
@@ -515,7 +516,9 @@ class _GoalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? cs.primaryContainer.withValues(alpha: 0.3) : cs.surfaceContainerLowest,
+      color: selected
+          ? cs.primaryContainer.withValues(alpha: 0.3)
+          : cs.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -580,7 +583,9 @@ class _SkillCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? cs.primaryContainer.withValues(alpha: 0.3) : cs.surfaceContainerLowest,
+      color: selected
+          ? cs.primaryContainer.withValues(alpha: 0.3)
+          : cs.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -664,7 +669,9 @@ class _EquipmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? cs.primaryContainer.withValues(alpha: 0.3) : cs.surfaceContainerLowest,
+      color: selected
+          ? cs.primaryContainer.withValues(alpha: 0.3)
+          : cs.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -747,9 +754,7 @@ class _SelectableChip extends StatelessWidget {
     return Material(
       color: selected ? cs.primary : cs.surfaceContainerLowest,
       shape: StadiumBorder(
-        side: BorderSide(
-          color: selected ? cs.primary : cs.outlineVariant,
-        ),
+        side: BorderSide(color: selected ? cs.primary : cs.outlineVariant),
       ),
       child: InkWell(
         customBorder: const StadiumBorder(),

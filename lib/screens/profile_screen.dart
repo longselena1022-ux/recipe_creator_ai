@@ -98,8 +98,8 @@ class ProfileScreen extends StatelessWidget {
         final name = (profile?.name.trim().isNotEmpty == true)
             ? profile!.name.trim()
             : (u.displayName?.trim().isNotEmpty == true
-                ? u.displayName!.trim()
-                : 'Chef');
+                  ? u.displayName!.trim()
+                  : 'Chef');
         final email = (profile?.email.trim().isNotEmpty == true)
             ? profile!.email.trim()
             : (u.email ?? '');
@@ -157,16 +157,18 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               _SettingsRow(
-                icon: Icons.notifications_none_rounded,
-                label: 'Notifications',
-                value: 'Coming soon',
-              ),
-              _SettingsRow(
                 icon: Icons.tune_rounded,
                 label: 'Dietary preferences',
                 value: (profile?.dietaryPreferences.isNotEmpty ?? false)
                     ? formatDietaryPreferences(profile!.dietaryPreferences)
                     : 'None set',
+                onTap: userProfileRepository == null
+                    ? null
+                    : () => _editDietaryPreferences(
+                        context,
+                        u,
+                        profile?.dietaryPreferences ?? const [],
+                      ),
               ),
               _SettingsRow(
                 icon: Icons.info_outline_rounded,
@@ -200,10 +202,7 @@ class ProfileScreen extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () => _confirmDeleteAccount(context, u),
-                  icon: Icon(
-                    Icons.delete_forever_rounded,
-                    color: cs.error,
-                  ),
+                  icon: Icon(Icons.delete_forever_rounded, color: cs.error),
                   label: Text(
                     'Delete account',
                     style: GoogleFonts.plusJakartaSans(
@@ -240,7 +239,10 @@ class ProfileScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [cs.primary, Color.lerp(cs.primary, cs.primaryContainer, 0.5)!],
+          colors: [
+            cs.primary,
+            Color.lerp(cs.primary, cs.primaryContainer, 0.5)!,
+          ],
         ),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
@@ -324,8 +326,11 @@ class ProfileScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.auto_awesome,
-                            size: 12, color: Colors.white),
+                        const Icon(
+                          Icons.auto_awesome,
+                          size: 12,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Home Chef',
@@ -434,7 +439,9 @@ class ProfileScreen extends StatelessWidget {
           StreamBuilder<int>(
             stream: stream,
             builder: (context, snap) {
-              final value = stream == null ? '—' : (snap.data?.toString() ?? '–');
+              final value = stream == null
+                  ? '—'
+                  : (snap.data?.toString() ?? '–');
               return Text(
                 value,
                 style: GoogleFonts.plusJakartaSans(
@@ -587,7 +594,11 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 64),
       child: Column(
         children: [
-          Icon(icon, size: 56, color: cs.onSurfaceVariant.withValues(alpha: 0.3)),
+          Icon(
+            icon,
+            size: 56,
+            color: cs.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
           const SizedBox(height: 16),
           Text(
             title,
@@ -635,7 +646,9 @@ class ProfileScreen extends StatelessWidget {
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(hintText: 'How should we call you?'),
+          decoration: const InputDecoration(
+            hintText: 'How should we call you?',
+          ),
           onSubmitted: (v) => Navigator.of(ctx).pop(v.trim()),
         ),
         actions: [
@@ -659,8 +672,116 @@ class ProfileScreen extends StatelessWidget {
         name: result,
       );
       if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Profile updated.')));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not update: $e')));
+      }
+    }
+  }
+
+  Future<void> _editDietaryPreferences(
+    BuildContext context,
+    User user,
+    List<String> current,
+  ) async {
+    final cs = Theme.of(context).colorScheme;
+    final selected = current.toSet();
+
+    final saved = await showModalBottomSheet<List<String>>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: cs.surfaceContainerLowest,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                      child: Text(
+                        'Dietary preferences',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: cs.onSurface,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'Recipes you generate will respect these.',
+                      style: GoogleFonts.workSans(
+                        fontSize: 13,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        for (final pref in kDietaryPreferences)
+                          _DietChip(
+                            pref: pref,
+                            selected: selected.contains(pref.key),
+                            onTap: () => setSheetState(() {
+                              if (!selected.add(pref.key)) {
+                                selected.remove(pref.key);
+                              }
+                            }),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () =>
+                            Navigator.of(ctx).pop(selected.toList()),
+                        style: FilledButton.styleFrom(
+                          shape: const StadiumBorder(),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: const Text('Save'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (saved == null) return;
+    // No change — skip the write.
+    if (saved.toSet().containsAll(current) &&
+        current.toSet().containsAll(saved)) {
+      return;
+    }
+    try {
+      await userProfileRepository?.saveOnboarding(
+        userId: user.uid,
+        dietaryPreferences: saved,
+        markComplete: true,
+      );
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated.')),
+          const SnackBar(content: Text('Dietary preferences updated.')),
         );
       }
     } catch (e) {
@@ -736,15 +857,15 @@ class ProfileScreen extends StatelessWidget {
         avatarId: selected,
       );
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Avatar updated.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Avatar updated.')));
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not update: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not update: $e')));
       }
     }
   }
@@ -765,15 +886,10 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: avatarBg(cs, option.id),
-              border: selected
-                  ? Border.all(color: cs.primary, width: 3)
-                  : null,
+              border: selected ? Border.all(color: cs.primary, width: 3) : null,
             ),
             alignment: Alignment.center,
-            child: Text(
-              option.emoji,
-              style: const TextStyle(fontSize: 30),
-            ),
+            child: Text(option.emoji, style: const TextStyle(fontSize: 30)),
           ),
           if (selected)
             Positioned(
@@ -805,9 +921,7 @@ class ProfileScreen extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         title: Text(
           'Delete account?',
           style: GoogleFonts.plusJakartaSans(
@@ -886,8 +1000,18 @@ class ProfileScreen extends StatelessWidget {
 
   static String _formatMonthYear(DateTime d) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[d.month - 1]} ${d.year}';
   }
@@ -907,4 +1031,53 @@ class _SettingsRow {
   final String label;
   final String? value;
   final VoidCallback? onTap;
+}
+
+class _DietChip extends StatelessWidget {
+  const _DietChip({
+    required this.pref,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final DietaryPreference pref;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Material(
+      color: selected ? cs.primary : cs.surfaceContainerLowest,
+      shape: StadiumBorder(
+        side: BorderSide(color: selected ? cs.primary : cs.outlineVariant),
+      ),
+      child: InkWell(
+        customBorder: const StadiumBorder(),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                pref.icon,
+                size: 18,
+                color: selected ? cs.onPrimary : cs.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                pref.label,
+                style: GoogleFonts.workSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: selected ? cs.onPrimary : cs.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

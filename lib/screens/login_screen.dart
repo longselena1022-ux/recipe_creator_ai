@@ -4,10 +4,7 @@ import 'package:recipe_creator_ai/screens/signup_screen.dart';
 import 'package:recipe_creator_ai/services/user_profile_repository.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({
-    super.key,
-    required this.userProfileRepository,
-  });
+  const LoginScreen({super.key, required this.userProfileRepository});
 
   final UserProfileRepository userProfileRepository;
 
@@ -66,14 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_messageForCode(e.code))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_messageForCode(e.code))));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Something went wrong: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Something went wrong: $e')));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -95,18 +92,17 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_messageForCode(e.code))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_messageForCode(e.code))));
     }
   }
 
   void _goToSignup() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => SignupScreen(
-          userProfileRepository: widget.userProfileRepository,
-        ),
+        builder: (_) =>
+            SignupScreen(userProfileRepository: widget.userProfileRepository),
       ),
     );
   }
@@ -202,8 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
                                 minimumSize: const Size(0, 0),
-                                tapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               child: const Text(
                                 'Forgot Password?',
@@ -287,15 +282,16 @@ class _BrandHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.restaurant_menu, color: colors.primary, size: 28),
+        Icon(Icons.restaurant_menu, color: colors.primary, size: 60),
         const SizedBox(width: 8),
         Text(
-          'PantryChef',
+          'Skillet',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: colors.primary,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
-              ),
+            color: colors.primary,
+            fontWeight: FontWeight.w800,
+            fontSize: 50,
+            letterSpacing: -0.2,
+          ),
         ),
       ],
     );

@@ -8,7 +8,13 @@ class _FakeRecipeGenerationService extends RecipeGenerationService {
   _FakeRecipeGenerationService() : super();
 
   @override
-  Future<List<Recipe>> generate(String ingredientsText) async {
+  Future<List<Recipe>> generate(
+    String ingredientsText, {
+    List<String> dietaryPreferences = const [],
+    String? cookingSkill,
+    String? goal,
+    List<String> equipment = const [],
+  }) async {
     return [
       Recipe(
         title: 'Test toast',
@@ -36,6 +42,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Test toast'), findsOneWidget);
-    expect(find.text('Suggestions'), findsOneWidget);
+    expect(find.text('Curated\nFor You'), findsOneWidget);
   });
 }
