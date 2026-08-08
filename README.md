@@ -19,4 +19,3 @@ samples, guidance on mobile development, and a full API reference.
 
 
 
-HELLO MY NAME IS JULIAN
