@@ -33,7 +33,7 @@ String emojiForIngredient(String name) {
   if (n.contains('bell pepper') || n.contains('capsicum') || n.contains('pepper')) {
     return '🫑';
   }
-  if (n.contains('broccoli')) return '🥦';
+  if (n.contains('broccoli') || n.contains('cauliflower')) return '🥦';
   if (n.contains('cabbage') ||
       n.contains('lettuce') ||
       n.contains('spinach') ||
@@ -41,6 +41,7 @@ String emojiForIngredient(String name) {
       n.contains('arugula') ||
       n.contains('bok choy') ||
       n.contains('chard') ||
+      n.contains('celery') ||
       n.contains('greens')) {
     return '🥬';
   }
@@ -50,8 +51,18 @@ String emojiForIngredient(String name) {
       n.contains('courgette')) {
     return '🥒';
   }
-  if (n.contains('carrot')) return '🥕';
+  if (n.contains('carrot') ||
+      n.contains('radish') ||
+      n.contains('beet') ||
+      n.contains('turnip') ||
+      n.contains('parsnip') ||
+      n.contains('daikon')) {
+    return '🥕';
+  }
   if (n.contains('corn') || n.contains('maize')) return '🌽';
+  if (n.contains('pumpkin') || n.contains('squash') || n.contains('gourd')) {
+    return '🎃';
+  }
   if (n.contains('onion') ||
       n.contains('shallot') ||
       n.contains('leek') ||
@@ -102,7 +113,11 @@ String emojiForIngredient(String name) {
     return '🫐';
   }
   if (n.contains('cherry') || n.contains('cherries')) return '🍒';
-  if (n.contains('peach') || n.contains('apricot') || n.contains('nectarine')) {
+  if (n.contains('peach') ||
+      n.contains('apricot') ||
+      n.contains('nectarine') ||
+      n.contains('plum') ||
+      n.contains('prune')) {
     return '🍑';
   }
   if (n.contains('pear') && !n.contains('pearl')) return '🍐';
@@ -252,19 +267,105 @@ String emojiForIngredient(String name) {
     return '🍬';
   }
   if (n.contains('salt')) return '🧂';
-  if (n.contains('canned') || n.contains('soup')) return '🥫';
+  if (n.contains('maple') || n.contains('syrup')) return '🍁';
+  if (n.contains('jam') ||
+      n.contains('jelly') ||
+      n.contains('marmalade') ||
+      n.contains('preserve')) {
+    return '🫙';
+  }
+  if (n.contains('mustard') ||
+      n.contains('mayo') ||
+      n.contains('relish') ||
+      n.contains('spice') ||
+      n.contains('seasoning') ||
+      n.contains('cumin') ||
+      n.contains('turmeric') ||
+      n.contains('cinnamon') ||
+      n.contains('nutmeg') ||
+      n.contains('curry powder') ||
+      n.contains('baking powder') ||
+      n.contains('baking soda') ||
+      n.contains('yeast')) {
+    return '🫙';
+  }
+  if (n.contains('oil')) return '🫗';
+  if (n.contains('canned') ||
+      n.contains('soup') ||
+      n.contains('stew') ||
+      n.contains('broth') ||
+      n.contains('stock')) {
+    return '🥫';
+  }
   if (n.contains('vinegar') || n.contains('mirin') || n.contains('sake')) {
     return '🍶';
   }
+
+  // Prepared & cooked dishes.
+  if (n.contains('pizza')) return '🍕';
+  if (n.contains('sushi') || n.contains('sashimi')) return '🍣';
+  if (n.contains('dumpling') ||
+      n.contains('dim sum') ||
+      n.contains('gyoza') ||
+      n.contains('wonton') ||
+      n.contains('potsticker')) {
+    return '🥟';
+  }
+  if (n.contains('taco')) return '🌮';
+  if (n.contains('burrito') || n.contains('wrap')) return '🌯';
+  if (n.contains('sandwich')) return '🥪';
+  if (n.contains('burger')) return '🍔';
+  if (n.contains('fries') || n.contains('french fr')) return '🍟';
+  if (n.contains('pancake')) return '🥞';
+  if (n.contains('waffle')) return '🧇';
+  if (n.contains('pretzel')) return '🥨';
+  if (n.contains('popcorn')) return '🍿';
+  if (n.contains('cookie') || n.contains('biscuit')) return '🍪';
+  if (n.contains('cake')) return '🍰';
+  if (n.contains('pie')) return '🥧';
+  if (n.contains('donut') || n.contains('doughnut')) return '🍩';
+  if (n.contains('pudding') || n.contains('custard') || n.contains('flan')) {
+    return '🍮';
+  }
+  if (n.contains('curry')) return '🍛';
+  if (n.contains('salad')) return '🥗';
 
   // Drinks.
   if (n.contains('coffee') || n.contains('espresso')) return '☕';
   if (n.contains('matcha') || n.contains('tea')) return '🍵';
   if (n.contains('wine')) return '🍷';
+  if (n.contains('champagne') ||
+      n.contains('prosecco') ||
+      n.contains('sparkling')) {
+    return '🍾';
+  }
   if (n.contains('beer') || n.contains('ale') || n.contains('lager')) return '🍺';
-  if (n.contains('juice')) return '🧃';
+  if (n.contains('whiskey') ||
+      n.contains('whisky') ||
+      n.contains('vodka') ||
+      n.contains('rum') ||
+      n.contains('gin') ||
+      n.contains('tequila') ||
+      n.contains('bourbon') ||
+      n.contains('brandy')) {
+    return '🥃';
+  }
+  if (n.contains('cocktail') ||
+      n.contains('margarita') ||
+      n.contains('martini')) {
+    return '🍸';
+  }
+  if (n.contains('soda') ||
+      n.contains('cola') ||
+      n.contains('soft drink') ||
+      n.contains('smoothie') ||
+      n.contains('milkshake') ||
+      n.contains('shake')) {
+    return '🥤';
+  }
+  if (n.contains('juice') || n.contains('lemonade')) return '🧃';
   if (n.contains('water')) return '💧';
   if (n.contains('ice')) return '🧊';
 
-  return '🥗';
+  return '🍽️';
 }

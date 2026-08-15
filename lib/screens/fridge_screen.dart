@@ -168,9 +168,14 @@ class _FridgeScreenState extends State<FridgeScreen> {
 
   Widget _buildContent(BuildContext context, List<FridgeItem> items) {
     final cs = Theme.of(context).colorScheme;
+    // Group by the category inferred live from the item name so the section an
+    // item lands in always matches its icon, even for items stored before the
+    // classifier was last updated.
     final byCategory = <FridgeCategory, List<FridgeItem>>{};
     for (final item in items) {
-      byCategory.putIfAbsent(item.category, () => []).add(item);
+      byCategory
+          .putIfAbsent(categoryForIngredient(item.name), () => [])
+          .add(item);
     }
 
     return SingleChildScrollView(

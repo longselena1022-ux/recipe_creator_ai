@@ -23,14 +23,14 @@ enum FridgeCategory {
 
 // Emoji groups (from [emojiForIngredient]) that map to each inventory category.
 // Anything not listed falls back to [FridgeCategory.pantry].
-const Set<String> _dairyEmoji = {'🧈', '🧀', '🥛', '🥚'};
+const Set<String> _dairyEmoji = {'🧈', '🧀', '🥛', '🥚', '🍦', '🍮'};
 const Set<String> _proteinEmoji = {
   '🥓', '🍗', '🦃', '🥩', '🍖', '🍤', '🦞', '🦀', '🦑', '🦪', '🐟', '🌭',
 };
 const Set<String> _produceEmoji = {
   // Vegetables & aromatics.
-  '🍆', '🍅', '🌶️', '🫑', '🥦', '🥬', '🥒', '🥕', '🌽', '🧅', '🧄', '🥔',
-  '🍄', '🥑', '🫚', '🫒', '🌿',
+  '🍆', '🍅', '🌶️', '🫑', '🥦', '🥬', '🥒', '🥕', '🌽', '🎃', '🧅', '🧄',
+  '🥔', '🍄', '🥑', '🫚', '🫒', '🌿',
   // Fruits.
   '🍎', '🍌', '🍇', '🍊', '🍓', '🫐', '🍒', '🍑', '🍐', '🍋', '🥭', '🍍',
   '🥥', '🍉', '🍈', '🥝',
