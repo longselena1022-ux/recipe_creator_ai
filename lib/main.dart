@@ -8,7 +8,6 @@ import 'package:recipe_creator_ai/widgets/auth_gate.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    name: 'Recipe Creator AI',
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final themeController = ThemeController();

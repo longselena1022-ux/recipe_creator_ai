@@ -1,8 +1,41 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId}/generations/{docId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+    // A signed-in user may only touch documents under their own uid.
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // users/{uid} — profile doc written by UserProfileRepository.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      // users/{uid}/savedRecipes/{docId}
+      match /savedRecipes/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // users/{uid}/inventory/{docId}
+      match /inventory/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // users/{uid}/generations/{docId}
+      match /generations/{docId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Anything else under a user doc: owner-only by default.
+      match /{subcollection}/{docId=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Everything else is denied.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

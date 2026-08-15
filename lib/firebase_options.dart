@@ -34,19 +34,19 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'REPLACE_ME',
-    appId: '1:000000000000:android:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'recipe-creator-ai-placeholder',
-    storageBucket: 'recipe-creator-ai-placeholder.appspot.com',
+    apiKey: 'AIzaSyBPhHMRHVzblCdmT-9dS6IURHsjxjSL1eo',
+    appId: '1:289612910458:android:3caaa0854353d45cbe50c3',
+    messagingSenderId: '289612910458',
+    projectId: 'recipe-generator-d96af',
+    storageBucket: 'recipe-generator-d96af.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'REPLACE_ME',
-    appId: '1:000000000000:ios:0000000000000000000000',
-    messagingSenderId: '000000000000',
-    projectId: 'recipe-creator-ai-placeholder',
-    storageBucket: 'recipe-creator-ai-placeholder.appspot.com',
+    apiKey: 'AIzaSyBblpXIFox0CiVwUhvUMal6L14m9Q5oMeY',
+    appId: '1:289612910458:ios:0da0048c0f9f1090be50c3',
+    messagingSenderId: '289612910458',
+    projectId: 'recipe-generator-d96af',
+    storageBucket: 'recipe-generator-d96af.firebasestorage.app',
     iosBundleId: 'com.example.recipeCreatorAi',
   );
 
