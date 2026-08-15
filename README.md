@@ -6,6 +6,8 @@ respect your dietary needs, cooking skill, goals, and the equipment you actually
 
 <p align="center">
   <img src="images/Screenshot_1786815023.png" width="320" alt="Skillet home screen" />
+  <img src="images/Screenshot_1786816329.png" width="320" alt="Skillet home screen" />
+
 </p>
 
 ## Features
