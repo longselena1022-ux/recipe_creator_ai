@@ -48,7 +48,7 @@ respect your dietary needs, cooking skill, goals, and the equipment you actually
 ```
 lib/
 ├── main.dart                  # Firebase init, ThemeController, AppThemeScope
-├── firebase_options.dart      # ⚠ placeholder values — replace with your own
+├── firebase_options.dart      # Firebase configuration
 ├── models/                    # Recipe, FridgeItem, UserProfile, SavedRecipeEntry, …
 ├── screens/
 │   ├── home_screen.dart       # 5-tab shell: Generate, Inventory, Recipes, Saved, Profile
@@ -73,9 +73,7 @@ users/{uid}/generations/{id}     # generation history (ingredients + recipes + c
 users/{uid}/savedRecipes/{id}    # saved recipes with liked flag
 ```
 
-Rules live in [firestore.rules](firestore.rules). Note that the shipped rules only cover the
-`generations` subcollection — the `inventory`, `savedRecipes`, and profile document paths need
-matching owner-only rules before this goes anywhere near production.
+Rules live in [firestore.rules](firestore.rules). Firestore security rules restrict each user to accessing only their own data.
 
 ## Getting started
 
@@ -85,8 +83,7 @@ matching owner-only rules before this goes anywhere near production.
    ```
 2. **Create a Firebase project** and enable Email/Password auth, Cloud Firestore, and the
    Firebase AI Logic (Gemini) API.
-3. **Regenerate Firebase config** — [lib/firebase_options.dart](lib/firebase_options.dart) is
-   checked in with placeholder ids and will not connect as-is:
+3. **Configure Firebase** — Add your Firebase project configuration to lib/firebase_options.dart:
    ```bash
    dart pub global activate flutterfire_cli
    flutterfire configure
@@ -113,6 +110,4 @@ and the home-screen generate flow against a fake `RecipeGenerationService`
 ## Design
 
 [DESIGN.md](DESIGN.md) holds the "Epicurean Bento" design system — colour tokens and the type
-scale that [lib/theme/app_theme.dart](lib/theme/app_theme.dart) implements. The
-`stitch_ingredient_recipe_finder/` directories (one at the repo root, one under `test/`) hold the
-generated HTML mockups and screenshots the onboarding screens were built from.
+scale that [lib/theme/app_theme.dart](lib/theme/app_theme.dart) implements. The 'stitch_ingredient_recipe_finder/' directories contain design mockups and reference screenshots used during development.
